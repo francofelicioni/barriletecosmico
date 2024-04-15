@@ -12,7 +12,7 @@ class ProductManager {
       const exists = fs.existsSync(this.path);
 
       if (!exists) {
-        const productSeeder = productsFactory(); 
+        const productSeeder = productsFactory(20); 
         const stringData = JSON.stringify(productSeeder, null, 2);
         fs.writeFileSync(this.path, stringData);
         console.log('file created!');
@@ -37,8 +37,7 @@ class ProductManager {
     return this.products;
   }
 
-  async addProduct  (title, desc, price, thumbnail, code, stock) {
-
+  async addProduct  (title, desc, price, thumbnail, category, code, stock ) {
     await this.getProducts();
 
     let newProduct = {
@@ -46,6 +45,7 @@ class ProductManager {
       title: title,
       desc: desc,
       price: price,
+      category: category,
       thumbnail: thumbnail,
       code: code,
       stock: stock,
@@ -70,27 +70,24 @@ class ProductManager {
   async getProductById (id) {
     await this.getProducts();
     let productFounded = this.products.find(p => p.id === id);
+
     return productFounded;
   }
 
-  async updateProduct (id, newdata) {
-
+  async updateProduct (id, newData) {
     await this.getProducts();
-
     let index = this.products.findIndex(p => p.id === id);
 
     this.products[index] = {
       ...this.products[index],
-      ...newdata
+      ...newData
     }
 
     await fs.promises.writeFile(this.path, JSON.stringify(this.products));
   }
 
   async deleteProduct (id) {
-
     await this.getProducts();
-
     const newProductsArray = this.products.filter(p => p.id !== id)
 
     if (this.products.length === newProductsArray.length) {
