@@ -1,0 +1,65 @@
+[
+  {
+    "id": 1,
+    "title": "Product 1",
+    "desc": "Description 1",
+    "price": 10,
+    "thumbnail": "https://via.placeholder.com/150",
+    "code": "CODE1",
+    "stock": 100,
+    "category": "deco"
+},
+{
+    "id": 2,
+    "title": "Product 2",
+    "desc": "Description 2",
+    "price": 20,
+    "thumbnail": "https://via.placeholder.com/150",
+    "code": "CODE2",
+    "stock": 50,
+    "category": "deco"
+},
+{
+    "id": 3,
+    "title": "Product 3",
+    "desc": "Description 3",
+    "price": 30,
+    "thumbnail": "https://via.placeholder.com/150",
+    "code": "CODE3",
+    "stock": 75,
+    "category": "garden"
+  }
+]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
