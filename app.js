@@ -1,5 +1,5 @@
 import express from 'express';
-import productManager from '/src/fs/productManager';
+import productManager from './src/fs/productManager.js';
 
 //Create express app/server 
 const app = express();
@@ -33,13 +33,13 @@ app.get('/products', read);
 
 async function read(req, res) {
     try {
-        const all = await productManager.getProducts();
+        const data = await productManager.getProducts();
         return res.json({
             status: 200,
-            response: all
+            response: data
         })
     } catch (error) {
-        console.log(err);
+        console.log(error);
         return res.json({
             status: 500,
             response: error.message
