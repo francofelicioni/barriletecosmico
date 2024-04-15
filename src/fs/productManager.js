@@ -4,6 +4,7 @@ class ProductManager {
   constructor() {
     this.products = [];
     this.path = ('./src/fs/files/products.json')
+    this.init();
   }
   init () {
     try {
@@ -22,9 +23,15 @@ class ProductManager {
     }
   }
 
-  async getProducts() {
+  async getProducts(category) {
     let productsJson = await fs.promises.readFile(this.path, 'utf-8');
-    this.products = productsJson || [];
+    this.products = JSON.parse(productsJson) || [];   
+
+    if (category) {
+      // Filter products based on the category
+      return this.products.filter(p => p.category === category);
+    }
+
     return this.products;
   }
 
@@ -59,19 +66,9 @@ class ProductManager {
     }
   }
   async getProductById (id) {
-
     await this.getProducts();
-
     let productFounded = this.products.find(p => p.id === id);
-
-    if (!productFounded) {
-      console.log(`Product with id ${id} was not founded.`)
-    } else {
-      console.log(`Product Founded!
-        -Title: ${productFounded.title}
-        -Stock: ${productFounded.stock}
-        `)
-    }
+    return productFounded;
   }
 
   async updateProduct (id, newdata) {
