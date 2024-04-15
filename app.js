@@ -1,5 +1,5 @@
 import express from 'express';
-import productManager from './src/fs/productManager.js';
+import productManager from './src/data/fs/productManager.js';
 
 const port = 8080;
 const ready = console.log(`Server ready on port ${port}`);
