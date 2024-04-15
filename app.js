@@ -29,15 +29,20 @@ app.get('/products/:id', readOne);
 
 async function read(req, res) {
     try {
-        const { category } = req.query;
+        const { limit, category } = req.query;
         let data = await productManager.getProducts();
+
+        if (limit > 0) {
+            (data.splice(parseInt(limit)));
+            console.log(data)
+        } 
 
         if (category) {
            data = await productManager.getProducts(category);
         }
-        
+
         return (data.length > 0) 
-            ? res.json({status: 200, response: data, category: category})
+            ? res.json({status: 200, response: data, limit: limit})
             : res.json({status: 200, message: 'Not Found'});
 
     } catch (error) {
