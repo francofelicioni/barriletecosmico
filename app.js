@@ -6,28 +6,23 @@ const ready = console.log(`Server ready on port ${port}`);
 
 const app = express();
 app.listen(port, ready);
-app.use(express.urlencoded({extended: true}));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => {
-    try {
-        const message = 'Welcome to kite mania'
-        return res.json({
-            status: 200,
-            message: message
-        })
+    const response = {
+        status: 200,
+        message: 'Welcome to Cosmic Barbell'
+    };
+    res.json(response);
+});
+app.get('/products', readAll);
+app.get('/products/:id', read);
+app.post('/products', create)
+app.put('/products/:id', update)
+app.delete('/products/:id', destroy);
 
-    } catch (error) {
-        console.log(error)
-        return res.json({
-            status: 505,
-            message: error,
-        })
-    }
-})
-app.get('/products', read);
-app.get('/products/:id', readOne);
-
-async function read(req, res) {
+async function readAll(req, res) {
     try {
         const { limit, category } = req.query;
         let data = await productManager.getProducts();
@@ -35,15 +30,15 @@ async function read(req, res) {
         if (limit > 0) {
             (data.splice(parseInt(limit)));
             console.log(data)
-        } 
-
-        if (category) {
-           data = await productManager.getProducts(category);
         }
 
-        return (data.length > 0) 
-            ? res.json({status: 200, response: data, limit: limit})
-            : res.json({status: 200, message: 'Not Found'});
+        if (category) {
+            data = await productManager.getProducts(category);
+        }
+
+        return (data.length > 0)
+            ? res.json({ status: 200, response: data, limit: limit })
+            : res.json({ status: 200, message: 'Not Found' });
 
     } catch (error) {
         console.log(error);
@@ -51,21 +46,78 @@ async function read(req, res) {
     }
 }
 
-async function readOne (req, res) {
+async function read(req, res) {
     try {
-        let { id } = req.params;
+        const { id } = req.params;
         const data = await productManager.getProductById(Number(id));
-        
+
         if (data) {
             return res.json({ status: 200, response: data })
         }
-       
-        const error = new Error (`Not founded for id ${id}!`);
-        error.status = 404;
-        throw error;
+
+        throw new Error(`Not founded for id ${id}!`);
 
     } catch (error) {
         console.log(error)
         return res.json({ status: error.status || 500, response: error.message || "Error" })
+    }
+}
+
+async function create(req, res) {
+    try {
+
+        const data = req.body;
+        const newData = await productManager.addProduct(data)
+
+        if (newData) {
+            return res.json({
+                status: 200,
+                response: data,
+            })
+        }
+
+        throw new Error(`Not founded for id ${id}!`);
+
+    } catch (error) {
+        console.log(error)
+        res.json({ status: error.status || 500, response: error.message || 'Error' })
+    }
+
+}
+
+async function update(req, res) {
+    try {
+        const { id } = req.params;
+        const data = req.body;
+
+        if (data) {
+            const dataUpdated = await productManager.updateProduct(id, data)
+            return res.json({ status: 200, response: data })
+        }
+
+        throw new Error(`Not founded for id ${id}!`);
+
+    } catch (error) {
+        console.log(error)
+        res.json({ status: error.status || 500, response: error.message || 'Error' })
+    }
+}
+
+async function destroy(req, res) {
+    try {
+        const { id } = req.params;
+        if (id) {
+            const data = await productManager.getProductById(parseInt(id));
+            if (data) {
+                await productManager.deleteProduct(parseInt(id));
+                return res.json({ status: 200, response: data })
+            }
+        }
+
+        throw new Error(`Not founded for id ${id}!`);
+
+    } catch (error) {
+        console.log(error);
+        res.json({ status: error.status, response: error.message })
     }
 }
