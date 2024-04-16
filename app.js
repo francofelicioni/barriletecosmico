@@ -12,7 +12,7 @@ app.use(express.urlencoded({ extended: true }));
 app.get('/', (req, res) => {
     const response = {
         status: 200,
-        message: 'Welcome to Cosmic Barbell'
+        message: 'Welcome to Barrilete Cósmico'
     };
     res.json(response);
 });
@@ -25,11 +25,10 @@ app.delete('/products/:id', destroy);
 async function readAll(req, res) {
     try {
         const { limit, category } = req.query;
-        let data = await productManager.getProducts();
+        const data = await productManager.getProducts();
 
         if (limit > 0) {
             (data.splice(parseInt(limit)));
-            console.log(data)
         }
 
         if (category) {
@@ -37,7 +36,7 @@ async function readAll(req, res) {
         }
 
         return (data.length > 0)
-            ? res.json({ status: 200, response: data, limit: limit })
+            ? res.json({ status: 200, response: data })
             : res.json({ status: 200, message: 'Not Found' });
 
     } catch (error) {
@@ -65,7 +64,6 @@ async function read(req, res) {
 
 async function create(req, res) {
     try {
-
         const data = req.body;
         const newData = await productManager.addProduct(data)
 
@@ -76,7 +74,7 @@ async function create(req, res) {
             })
         }
 
-        throw new Error(`Not founded for id ${id}!`);
+        throw new Error(`Error: no data to create a new resource!`);
 
     } catch (error) {
         console.log(error)
@@ -92,7 +90,7 @@ async function update(req, res) {
 
         if (data) {
             const dataUpdated = await productManager.updateProduct(id, data)
-            return res.json({ status: 200, response: data })
+            return res.json({ status: 200, response: dataUpdated })
         }
 
         throw new Error(`Not founded for id ${id}!`);
