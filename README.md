@@ -28,14 +28,14 @@ This is an e-commerce platform for home design products. It allows users to brow
 
 ## Installation
 
-1. Clone the repository: `git clone https://github.com/your-username/home-design-ecommerce.git`
+1. Clone the repository: `git clone https://github.com/francofelicioni/barrilete-cosmico.git`
 2. Install dependencies: `npm install`
 3. Set up environment variables: Create a `.env` file and add the necessary variables (e.g., database connection string, Stripe API keys)
-4. Start the development server: `npm start`
+4. Start the development server: `npm run dev`
 
 ## Usage
 
-- Visit the website at [http://localhost:3000](http://localhost:3000) to access the home design e-commerce platform.
+- Visit the website at [http://localhost:8080](http://localhost:8080) to access the home design e-commerce platform.
 - Explore the product catalog, add items to your cart, and proceed to checkout.
 - Create an account or log in to access additional features like order history and wishlist.
 
@@ -52,7 +52,3 @@ Contributions are welcome! If you'd like to contribute to this project, please f
 ## License
 
 This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
-
-## Contact
-
-For any questions or inquiries, please contact [](mailto:your-email@example.com).
