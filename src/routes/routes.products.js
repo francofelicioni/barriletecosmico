@@ -80,7 +80,7 @@ async function update(req, res) {
         const data = req.body;
 
         const dataUpdated = await productManager.updateProduct(id, data)
-       
+
         res.status(201).json(dataUpdated);
 
     } catch (error) {
@@ -92,15 +92,14 @@ async function update(req, res) {
 async function destroy(req, res) {
     try {
         const { id } = req.params;
-        if (id) {
-            const data = await productManager.getProductById(parseInt(id));
-            if (data) {
-                await productManager.deleteProduct(parseInt(id));
-                return res.json({ status: 200, response: data })
-            }
+        const data = await productManager.getProductById(Number(id));
+
+        if (data) {
+            await productManager.deleteProduct(parseInt(id));
+            return res.json({ status: 200, message: 'Product deleted' })
         }
 
-        throw new Error(`Not founded for id ${id}!`);
+        throw new Error(`Product not founded!`);
 
     } catch (error) {
         console.log(error);
