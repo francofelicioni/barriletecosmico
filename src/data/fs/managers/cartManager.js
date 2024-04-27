@@ -36,10 +36,30 @@ class CartManager {
         return cartFounded;
     }
 
+    async createCart (pid) {
+
+        await this.getCarts()
+        const newCart = {
+            id: this.carts.length + 1,
+            products: 
+                {
+                    product: pid,
+                    quantity: 1
+                }
+        }
+
+        this.carts.push(newCart)
+        await fs.promises.writeFile(this.path, JSON.stringify(this.carts))
+    }
+
     async addCart(cid, pid) {
         await this.getCarts();
         const cartIndex = this.carts.findIndex(c => c.id === (+cid));
-        if (cartIndex === -1) return `Not founded for id ${cid}`
+
+        if (cartIndex === -1) {
+            this.createCart(pid)
+            return ('New cart created')
+        }
 
         const cart = this.carts[cartIndex];
         const productIndex = cart.products.findIndex(p => p.product === pid);
@@ -56,31 +76,6 @@ class CartManager {
 
         return cart;
     }
-
-
-    // async addQuantity(cid, pid) {
-
-    //     await this.getCarts()
-    //     const index = this.carts.find(c => c.id === (+cid))
-
-    //     if (index === -1) {
-    //       return 'Cart not founded'  
-    //     } 
-
-    //     this.carts(index).push({
-    //         id: pid,
-    //         quantity: 1
-    //     })
-
-    //     let newCart = {
-    //         id: this.carts.length + 1,
-    //         products: []
-    //     }
-
-    //     this.carts.push(newCart)
-
-    //     await fs.promises.writeFile(this.path, JSON.stringify(this.carts))
-    // }
 }
 
 let cartManager = new CartManager()
