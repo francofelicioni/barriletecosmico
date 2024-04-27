@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { productsFactory } from '../../utils/utils.js';
+import { productsFactory } from '../../../utils/utils.js';
 
 class ProductManager {
   constructor() {
@@ -37,18 +37,19 @@ class ProductManager {
     return this.products;
   }
 
-  async addProduct  (title, desc, price, thumbnail, category, code, stock ) {
+  async addProduct  ({title, description, price, thumbnail, category, code, stock }) {
     await this.getProducts();
 
     let newProduct = {
       id: this.products.length + 1,
-      title: title,
-      desc: desc,
-      price: price,
-      category: category,
-      thumbnail: thumbnail,
-      code: code,
-      stock: stock,
+      title,
+      description,
+      price,
+      category,
+      thumbnail,
+      code,
+      stock,
+      status:true,
     };
 
     let productExists = this.products.find(p => p.code === code);
@@ -76,7 +77,7 @@ class ProductManager {
 
   async updateProduct (id, newData) {
     await this.getProducts();
-    let index = this.products.findIndex(p => p.id === id);
+    let index = this.products.findIndex(p => p.id === (+id));
 
     this.products[index] = {
       ...this.products[index],
