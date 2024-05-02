@@ -1,5 +1,6 @@
 import express from 'express';
 import router from './src/routes/index.js';
+import { Server } from 'socket.io';
 
 const port = 8080;
 const ready = console.log(`Server ready on port ${port}`);
