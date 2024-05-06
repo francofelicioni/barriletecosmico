@@ -26,8 +26,8 @@ class ProductManager {
   }
 
   async getProducts(category) {
-    let productsJson = await fs.promises.readFile(this.path, 'utf-8');
-    this.products = JSON.parse(productsJson) || [];   
+    let productsJSON = await fs.promises.readFile(this.path, 'utf-8');
+    this.products = JSON.parse(productsJSON) || [];   
 
     if (category) {
       // Filter products based on the category
@@ -37,7 +37,7 @@ class ProductManager {
     return this.products;
   }
 
-  async addProduct  ({title, description, price, thumbnail, category, code, stock }) {
+  async addProduct  ({title, description, price, category, code, stock }) {
     await this.getProducts();
 
     let newProduct = {
@@ -46,11 +46,15 @@ class ProductManager {
       description,
       price,
       category,
-      thumbnail,
       code,
       stock,
       status:true,
     };
+
+    (typeof thumbnail !== 'undefined') 
+      ? newProduct.thumbnail = thumbnail
+      : newProduct.thumbnail = ''
+    
 
     let productExists = this.products.find(p => p.code === code);
 
