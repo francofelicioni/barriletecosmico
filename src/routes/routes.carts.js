@@ -27,14 +27,17 @@ async function readAll(_req, res) {
 async function read(req, res) {
   try {
     const { id } = req.params;
-    const data = await cartManager.getCartById(Number(id));
 
+    if (!id) {
+      return res.json({ status: 404, response: `Not founded for id ${id}!`});
+    }
+
+    const data = await cartManager.getCartById(Number(id));
     if (data) {
       return res.json({ status: 200, response: data })
     }
 
-    throw new Error(`Not founded for id ${id}!`);
-
+    throw new Error(`Error when fetching data!`);
   } catch (error) {
     console.log(error)
     return res.json({ status: error.status || 500, response: error.message || "Error" })
