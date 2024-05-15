@@ -1,5 +1,6 @@
 import { Router } from "express";
 import productManager from "../data/fs/managers/productManager.js";
+import { productModel } from "../models/products.model.js";
 
 const router = Router();
 
@@ -12,23 +13,25 @@ router.delete('/:id', destroy);
 async function readAll(req, res) {
     try {
         const { limit, category } = req.query;
-        let data = await productManager.getProducts();
+        let products = await productModel.find();
 
         if (limit > 0) {
-            (data.splice(parseInt(limit)));
+            products = products.slice(0, parseInt(limit));
         }
 
         if (category) {
-            data = await productManager.getProducts(category);
+            products = await productManager.getProducts(category);
         }
 
-        return (data.length > 0)
-            ? res.json({ status: 200, response: data })
-            : res.json({ status: 200, message: 'Not Found' });
+        if (products.length === 0) {
+            products = [];
+        }
 
+        return products
+            ? res.json({ status: 200, response: products })
+            : res.json({ status: 200, message: 'Not Found' });
     } catch (error) {
-        console.log(error);
-        return res.json({ status: 500, response: error.message })
+        return res.json({ status: 500, response: error.message });
     }
 }
 
