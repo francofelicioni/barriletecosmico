@@ -2,9 +2,8 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 dotenv.config();
 
-const dbName = "e-commerce";
 const dbPassword = process.env.DB_PASSWORD
-const urlDb = `mongodb+srv://franfelicioni:${dbPassword}@bc-ecommerce.zt5qt94.mongodb.net/${dbName}`
+const urlDb = `mongodb+srv://franfelicioni:${dbPassword}@bc-ecommerce.zt5qt94.mongodb.net/e-commerce`
 
 export const connectMongoDB = async () => {
     try {
