@@ -12,9 +12,9 @@ async function read(req, res) {
     const { cid } = req.params;
 
     const cartFounded = await cartDao.getCartById(cid);
-    
+
     if (cartFounded) {
-      return res.status(200).json({message: 'success', payload: cartFounded})
+      return res.status(200).json({ message: 'success', payload: cartFounded })
     }
 
     return json.status(404).message(`Cart not founded for id ${id}!`)
@@ -25,24 +25,30 @@ async function read(req, res) {
 }
 
 async function create(_req, res) {
-  try {    
+  try {
     const newCart = await cartDao.createCart();
-    res.status(201).json({message: "success", payload: newCart})
+
+    if (newCart) {
+      return res.status(201).json({ message: "success", payload: newCart })
+    }
+
+    throw new Error('Error: no data to create a new resource!');
 
   } catch (err) {
     console.log(err)
   }
 }
 
-async function update (req, res ) {
+
+async function update(req, res) {
 
   const { cid, pid } = req.params;
   const cart = await cartDao.addProductToCart(cid, pid)
 
-  if(cart.product == false) return res.status(404).json({status: "Error", msg: `No se encontró el producto con el id ${pid}`});
-  if(cart.cart == false) return res.status(404).json({status: "Error", msg: `No se encontró el carrito con el id ${cid}`});
+  if (cart.product == false) return res.status(404).json({ status: "Error", msg: `No se encontró el producto con el id ${pid}` });
+  if (cart.cart == false) return res.status(404).json({ status: "Error", msg: `No se encontró el carrito con el id ${cid}` });
 
-  res.status(200).json({status: "success", payload: cart});
+  res.status(200).json({ status: "success", payload: cart });
 }
 
 export default router;
