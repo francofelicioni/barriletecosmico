@@ -1,69 +1,48 @@
 import { Router } from "express";
-import { cartModel } from "../dao/models/cart.model.js";
-
-
+import cartDao from "../dao/mongoDao/cartDao.js";
 const router = Router()
 
-
-router.get('/', readAll)
+router.get('/:cid', read);
 router.post('/', create)
-router.get('/:id', read);
 router.post('/:cid/product/:pid', update)
 
 
-async function readAll(_req, res) {
-  try {
-    const data = await cartModel.find()
-
-    if (data.length === 0) {
-      return res.json({ status: 200, message: 'No carts created' })
-    }
-
-    res.status(200).json(data)
-  } catch (error) {
-    console.log(error)
-  }
-}
-
 async function read(req, res) {
   try {
-    const { id } = req.params;
+    const { cid } = req.params;
 
-    if (!id) {
-      return res.json({ status: 404, response: `Not founded for id ${id}!`});
+    const cartFounded = await cartDao.getCartById(cid);
+    
+    if (cartFounded) {
+      return res.status(200).json({message: 'success', payload: cartFounded})
     }
 
-    const data = await cartModel.findById(Number(id));
-    if (data) {
-      return res.json({ status: 200, response: data })
-    }
+    return json.status(404).message(`Cart not founded for id ${id}!`)
 
-    throw new Error(`Error when fetching data!`);
   } catch (error) {
     console.log(error)
-    return res.json({ status: error.status || 500, response: error.message || "Error" })
   }
 }
 
-async function create(req, res) {
+async function create(_req, res) {
   try {    
-    const newCart = await cartModel.create();
-    res.status(201).json(newCart)
+    const newCart = await cartDao.createCart();
+    res.status(201).json({message: "success", payload: newCart})
 
   } catch (err) {
     console.log(err)
   }
 }
 
-async function update(req, res) {
-  try {
-    const {cid, pid} = req.params
-    const cart = await cartModel.findByIdAndUpdate(cid, pid)
-    res.status(201).json(cart)
+async function update (req, res ) {
 
-  } catch (err) {
-    console.log(err)
-  }
+  const { cid, pid } = req.params;
+  const cart = await cartDao.addProductToCart(cid, pid)
+
+  if(cart.product == false) return res.status(404).json({status: "Error", msg: `No se encontró el producto con el id ${pid}`});
+  if(cart.cart == false) return res.status(404).json({status: "Error", msg: `No se encontró el carrito con el id ${cid}`});
+
+  res.status(200).json({status: "success", payload: cart});
 }
 
 export default router;
