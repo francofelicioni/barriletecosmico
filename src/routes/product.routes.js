@@ -1,54 +1,35 @@
 import { Router } from "express";
 import { productModel } from "../dao/models/product.model.js";
+import productDao from "../dao/mongoDao/product.dao.js";
 
 const router = Router();
 
 router.get('/', readAll);
-router.get('/:_id', read);
+router.get('/:id', read);
 router.post('/', create)
-router.put('/:_id', update)
-router.delete('/:_id', destroy);
+router.put('/:id', update)
+router.delete('/:id', destroy);
 
-async function readAll(req, res) {
+async function readAll(_req, res) {
     try {
-        const { limit, category } = req.query;
-        let products = await productModel.find();
-
-        if (limit > 0) {
-            products = products.slice(0, parseInt(limit));
-        }
-
-        if (category) {
-            products = await productModel.find(category);
-        }
-
-        if (products.length === 0) {
-            products = [];
-        }
-
-        return products
-            ? res.json({ status: 200, response: products })
+        const products = await productDao.getProducts();
+        return products.length
+            ? res.json({ status: 200, payload: products })
             : res.json({ status: 200, message: 'Not Found' });
     } catch (error) {
-        return res.json({ status: 500, response: error.message });
+        return res.status(500).json({ message: error.message });
     }
 }
-
 async function read(req, res) {
     try {
         const { id } = req.params;
+        const product = await productDao.getProductById(id);
 
-        if (!id) {
-            return res.json({ status: 404, response: `Not founded for id ${id}!`});
+        if (product) {
+            return res.json({ status: 200, payload: product })
         }
 
-        const data = await productModel.findById(id);
-
-        if (data) {
-            return res.json({ status: 200, response: data })
-        }
-
-        throw new Error(`Error when fetching data!`);
+        return res.json({ status: 404, response: `Not founded for id ${id}!`});
 
     } catch (error) {
         console.log(error)
@@ -59,10 +40,10 @@ async function read(req, res) {
 async function create(req, res) {
     try {
         const { body } = req;
-        const newProduct = await productModel.create(body);
+        const newProduct = await productDao.createProduct(body);
 
         if (newProduct) {
-            return res.status(201).json(newProduct);
+            return res.status(201).json({status: "Success", payload:newProduct});
         }
 
         throw new Error('Error: no data to create a new resource!');
@@ -77,11 +58,11 @@ async function create(req, res) {
 async function update(req, res) {
     try {
         const { id } = req.params;
-        const data = req.body;
+        const productData = req.body;
 
-        const dataUpdated = await productModel.findByIdAndUpdate(id, data)
+        const dataUpdated = await productDao.updateProductById(id, productData)
 
-        res.status(201).json(dataUpdated);
+        res.status(201).json({status: 'success', payload: dataUpdated});
 
     } catch (error) {
         console.log(error)
@@ -92,10 +73,10 @@ async function update(req, res) {
 async function destroy(req, res) {
     try {
         const { id } = req.params;
-        const data = await productModel.findById(Number(id));
+        const productToDelete = await productModel.findById(id);
 
-        if (data) {
-            await productModel.findByIdAndDelete(parseInt(id));
+        if (productToDelete) {
+            await productDao.deleteProductById(id);
             return res.json({ status: 200, message: 'Product deleted' })
         }
 
