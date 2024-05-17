@@ -57,16 +57,20 @@ async function create(req, res) {
 
 async function update(req, res) {
     try {
-        const { id } = req.params;
-        const productData = req.body;
+        const { id } = req.params
+        const productData = req.body
 
         const dataUpdated = await productDao.updateProductById(id, productData)
 
-        res.status(201).json({status: 'success', payload: dataUpdated});
+        if (!dataUpdated) {
+            res.status(404).json({ status:"Error", meesage: `Not found product with id ${id}`})
+        }
+
+        return res.status(200).json({status: 'success', payload: dataUpdated})
 
     } catch (error) {
-        console.log(error)
-        res.json({ status: error.status || 500, response: error.message || 'Error' })
+        console.error(error);
+        return res.status(500).json({ message: error.message });
     }
 }
 
@@ -80,7 +84,7 @@ async function destroy(req, res) {
             return res.json({ status: 200, message: 'Product deleted' })
         }
 
-        throw new Error(`Product not founded!`);
+        throw new Error(`Product with id ${id} not founded!`);
 
     } catch (error) {
         console.log(error);
