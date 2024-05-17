@@ -1,6 +1,8 @@
 import express from 'express';
 import router from './src/routes/index.js';
+import { connectMongoDB } from './src/config/mongoDB.config.js';
 
+connectMongoDB();
 const port = 8080;
 const ready = console.log(`Server ready on port ${port}`);
 
