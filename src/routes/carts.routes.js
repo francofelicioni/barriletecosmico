@@ -1,5 +1,6 @@
 import { Router } from "express";
-import cartManager from "../data/fs/managers/cartManager.js";
+import { cartModel } from "../dao/models/cart.model.js";
+
 
 const router = Router()
 
@@ -12,7 +13,7 @@ router.post('/:cid/product/:pid', update)
 
 async function readAll(_req, res) {
   try {
-    const data = await cartManager.getCarts()
+    const data = await cartModel.find()
 
     if (data.length === 0) {
       return res.json({ status: 200, message: 'No carts created' })
@@ -32,7 +33,7 @@ async function read(req, res) {
       return res.json({ status: 404, response: `Not founded for id ${id}!`});
     }
 
-    const data = await cartManager.getCartById(Number(id));
+    const data = await cartModel.findById(Number(id));
     if (data) {
       return res.json({ status: 200, response: data })
     }
@@ -46,7 +47,7 @@ async function read(req, res) {
 
 async function create(req, res) {
   try {    
-    const newCart = await cartManager.addCart();
+    const newCart = await cartModel.create();
     res.status(201).json(newCart)
 
   } catch (err) {
@@ -57,7 +58,7 @@ async function create(req, res) {
 async function update(req, res) {
   try {
     const {cid, pid} = req.params
-    const cart = await cartManager.updateCart(cid, pid)
+    const cart = await cartModel.findByIdAndUpdate(cid, pid)
     res.status(201).json(cart)
 
   } catch (err) {
