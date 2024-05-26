@@ -1,6 +1,5 @@
 import { productModel } from "../models/product.model.js";
 
-
 const getProducts = async (query, options = {}) => {
     const products = await productModel.paginate(query, options);
     return products;
