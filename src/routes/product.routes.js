@@ -38,7 +38,7 @@ async function readAll(req, res) {
             : res.json({ status: 200, message: 'Not Found' });
 
     } catch (error) {
-        return res.status(500).json({ message: error.message });
+        return res.status(500).json({ status: 'Error', message: "500 Internal Server Error" });
     }
 }
 async function read(req, res) {
