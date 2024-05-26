@@ -10,12 +10,35 @@ router.post('/', create)
 router.put('/:id', update)
 router.delete('/:id', destroy);
 
-async function readAll(_req, res) {
+async function readAll(req, res) {
     try {
-        const products = await productDao.getProducts();
-        return products.length
-            ? res.json({ status: 200, payload: products })
+        const { limit, page, sort, category, status } = req.query;
+
+        const options = {
+            limit: Number(limit) || 10,
+            page: Number(page) || 1,
+            sort: { price: sort === "asc" ? 1 : -1 },
+            lean: true,
+        };
+
+        if (status) {
+            const products = await productDao.getProducts({ status }, options)
+            return res.status(200).json(products)
+        }
+
+        if (category) {
+            const products = await productDao.getProducts({ category }, options)
+            return res.status(200).json(products)
+        }
+
+        const products = await productDao.getProducts({}, options);
+
+        console.log(products)
+
+        return products.docs.length
+            ? res.json({ status: 200, products })
             : res.json({ status: 200, message: 'Not Found' });
+
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
