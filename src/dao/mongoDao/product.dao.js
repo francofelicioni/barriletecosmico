@@ -9,9 +9,9 @@ const getProducts = async (query, options = {}) => {
 const getProductById = async id => {
     const product = await productModel.findById(id);
     return product;
-}; 
+};
 
-const createProduct = async ( data ) => {
+const createProduct = async (data) => {
     const newProduct = await productModel.create(data);
     return newProduct;
 };
@@ -22,7 +22,7 @@ const updateProductById = async (id, data) => {
 };
 
 const deleteProductById = async (id) => {
-    const deletedProduct = await productModel.deleteOne({_id: id});
+    const deletedProduct = await productModel.deleteOne({ _id: id });
     if (!deletedProduct) {
         throw new Error(`Product not found with id ${id}`);
     }

@@ -50,7 +50,7 @@ async function read(req, res) {
             return res.json({ status: 200, payload: product })
         }
 
-        return res.json({ status: 404, response: `Not founded for id ${id}!`});
+        return res.json({ status: 404, response: `Not founded for id ${id}!` });
 
     } catch (error) {
         console.log(error)
@@ -64,7 +64,7 @@ async function create(req, res) {
         const newProduct = await productDao.createProduct(body);
 
         if (newProduct) {
-            return res.status(201).json({status: "Success", payload:newProduct});
+            return res.status(201).json({ status: "Success", payload: newProduct });
         }
 
         throw new Error('Error: no data to create a new resource!');
@@ -84,10 +84,10 @@ async function update(req, res) {
         const dataUpdated = await productDao.updateProductById(id, productData)
 
         if (!dataUpdated) {
-            res.status(404).json({ status:"Error", meesage: `Not found product with id ${id}`})
+            res.status(404).json({ status: "Error", meesage: `Not found product with id ${id}` })
         }
 
-        return res.status(200).json({status: 'success', payload: dataUpdated})
+        return res.status(200).json({ status: 'success', payload: dataUpdated })
 
     } catch (error) {
         console.error(error);
