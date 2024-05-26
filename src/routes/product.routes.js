@@ -35,7 +35,7 @@ async function readAll(req, res) {
 
         return products.docs.length
             ? res.json({ status: 200, products })
-            : res.json({ status: 200, message: 'Not Found' });
+            : res.json({ status: 200, message: 'Not products founded' });
 
     } catch (error) {
         return res.status(500).json({ status: 'Error', message: "500 Internal Server Error" });
@@ -50,7 +50,7 @@ async function read(req, res) {
             return res.json({ status: 200, payload: product })
         }
 
-        return res.json({ status: 404, response: `Not founded for id ${id}!` });
+        return res.json({ status: 404, response: `Product with id ${id} not founded!` });
 
     } catch (error) {
         console.log(error)
@@ -60,21 +60,14 @@ async function read(req, res) {
 
 async function create(req, res) {
     try {
-        const { body } = req;
-        const newProduct = await productDao.createProduct(body);
+        const productData = req.body;
+        const newProduct = await productDao.createProduct(productData);
 
-        if (newProduct) {
-            return res.status(201).json({ status: "Success", payload: newProduct });
-        }
-
-        throw new Error('Error: no data to create a new resource!');
-
+        return res.status(201).json({ status: 'Success', payload: newProduct });
     } catch (error) {
-        console.error(error);
         return res.status(500).json({ message: error.message });
     }
 }
-
 
 async function update(req, res) {
     try {
