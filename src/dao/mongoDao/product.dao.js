@@ -1,10 +1,10 @@
 import { productModel } from "../models/product.model.js";
 
 
-const getProducts = async () => {
-    const products = await productModel.find();
+const getProducts = async (query, options = {}) => {
+    const products = await productModel.paginate(query, options);
     return products;
-}
+};
 
 const getProductById = async id => {
     const product = await productModel.findById(id);
