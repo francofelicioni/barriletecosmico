@@ -33,8 +33,6 @@ async function readAll(req, res) {
 
         const products = await productDao.getProducts({}, options);
 
-        console.log(products)
-
         return products.docs.length
             ? res.json({ status: 200, products })
             : res.json({ status: 200, message: 'Not Found' });
