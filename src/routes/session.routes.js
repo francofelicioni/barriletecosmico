@@ -5,6 +5,7 @@ import userDao from "../dao/mongoDao/user.dao.js";
 const router = Router();
 
 router.post('/register', register)
+router.post('/login', login)
 
 
 async function register(req, res) {
@@ -18,6 +19,29 @@ async function register(req, res) {
         if (!newUser) return res.status(400).json({ status: 'Error', message: 'User cannot be created' })
 
         return res.status(201).json({ status: 'success', payload: newUser })
+    } catch (error) {
+        return res.status(500).json({ status:'Error', message: 'Internal Server Error' })
+    }
+}
+async function login(req, res) {
+    try {
+        const {email, password} = req.body
+        
+        if (email === 'admiCoder@coder.com' && password === 'adminCod3r123') {
+            req.session.user = {
+                email,
+                role: 'admin',
+            }
+
+            return res.status(200).json({ status: 'success', message: 'Admin logged in', payload: req.session.user })
+        }
+
+        const user = await userDao.getUserByEmail(email)
+
+        if (!user) return res.status(400).json({ status: 'Error', message: 'User not found' })
+
+        return res.status(200).json({ status: 'success', message: 'User logged in', payload: user })
+
     } catch (error) {
         return res.status(500).json({ status:'Error', message: 'Internal Server Error' })
     }
