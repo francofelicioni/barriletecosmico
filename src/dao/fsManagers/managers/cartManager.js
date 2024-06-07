@@ -6,26 +6,25 @@ class CartManager {
         this.path = ('./src/data/fs/files/carts.json')
         this.init();
     }
-    init() {
+    init () {
         try {
-            const exists = fs.existsSync(this.path);
-
-            if (!exists) {
-                const stringData = JSON.stringify([], null, 2);
-                fs.writeFileSync(this.path, stringData);
-                console.log('carts file created!');
-            } else {
-                console.log('carts file connected');
-            }
-
+          const exists = fs.existsSync(this.path);
+    
+          if (!exists) {
+            fs.writeFileSync(this.path, '[]');
+            console.log('file created!');
+          } else {
+            console.log('file connected');
+          }
+          
         } catch (error) {
-            throw error;
+          throw error;
         }
     }
 
     async getCarts() {
         let cartsJSON = await fs.promises.readFile(this.path, 'utf-8')
-        this.carts = JSON.parse(cartsJSON) || [];
+        this.carts = JSON.parse(cartsJSON);
         return this.carts;
     }
 
@@ -36,30 +35,24 @@ class CartManager {
         return cartFounded;
     }
 
-    async createCart (pid) {
+    async addCart() {
+        await this.getCarts();
 
-        await this.getCarts()
         const newCart = {
             id: this.carts.length + 1,
-            products: 
-                {
-                    product: pid,
-                    quantity: 1
-                }
-        }
+            products: [],
+        };
 
-        this.carts.push(newCart)
-        await fs.promises.writeFile(this.path, JSON.stringify(this.carts))
+        this.carts.push(newCart);
+
+        await fs.promises.writeFile(this.path, JSON.stringify(this.carts));
+        return this.carts;
     }
 
-    async addCart(cid, pid) {
+    async updateCart(cid, pid) {
         await this.getCarts();
         const cartIndex = this.carts.findIndex(c => c.id === (+cid));
-
-        if (cartIndex === -1) {
-            this.createCart(pid)
-            return ('New cart created')
-        }
+        if (cartIndex === -1) return `Not founded for id ${cid}`
 
         const cart = this.carts[cartIndex];
         const productIndex = cart.products.findIndex(p => p.product === pid);
