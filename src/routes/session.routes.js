@@ -38,7 +38,7 @@ async function login(req, res) {
 
         const user = await userDao.getUserByEmail(email)
 
-        if (!user) return res.status(400).json({ status: 'Error', message: 'User not found' })
+        if (!user || user.password !== password) return res.status(400).json({ status: 'Error', message: 'Email or password not valid' })
 
         return res.status(200).json({ status: 'success', message: 'User logged in', payload: user })
 
