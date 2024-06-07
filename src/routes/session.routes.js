@@ -1,12 +1,11 @@
 import { Router } from "express";
-import { userModel } from "../dao/models/user.model.js";
 import userDao from "../dao/mongoDao/user.dao.js";
 
 const router = Router();
 
 router.post('/register', register)
 router.post('/login', login)
-
+router.get('/logout', logout)
 
 async function register(req, res) {
     try {
@@ -50,6 +49,14 @@ async function login(req, res) {
     } catch (error) {
         return res.status(500).json({ status:'Error', message: 'Internal Server Error' })
     }
+}
+async function logout(req, res) {
+  try {
+    req.session.destroy();
+    return res.status(200).json({ status: 'success', message: 'User logged out' });
+  } catch (error) {
+    return res.status(500).json({ status: 'Error', message: 'Internal Server Error' });
+  }
 }
 
 export default router
