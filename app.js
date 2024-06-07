@@ -1,5 +1,7 @@
 import express from 'express';
 import router from './src/routes/index.js';
+import session from 'express-session';
+import MongoStore from 'connect-mongo';
 import { connectMongoDB } from './src/config/mongoDB.config.js';
 
 connectMongoDB();
@@ -9,6 +11,7 @@ const ready = console.log(`Server ready on port ${port}`);
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 
 app.listen(port, ready);
 app.use('/api', router);
