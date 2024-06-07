@@ -1,12 +1,12 @@
 import { Router } from 'express'
-import productsRouter from './product.routes.js'
-import cartsRouter from './carts.routes.js'
-import sessionsRouter from './session.routes.js'
+import productRoutes from './product.routes.js'
+import cartRoutes from './cart.routes.js'
+import sessionRoutes from './session.routes.js'
 
 const router = Router()
 
-router.use('/products', productsRouter)
-router.use('/carts', cartsRouter)
-router.use('/sessions', sessionsRouter)
+router.use('/products', productRoutes)
+router.use('/carts', cartRoutes)
+router.use('/sessions', sessionRoutes)
 
 export default router
