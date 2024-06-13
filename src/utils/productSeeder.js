@@ -2,7 +2,7 @@ import { faker } from '@faker-js/faker';
 
 const products = [];
 
-export const productsFactory = (q) => {
+export const productsSeeder = (q) => {
     for (let i = 1; i <= q; i++) {
         const product = {
           id: i,
@@ -19,4 +19,3 @@ export const productsFactory = (q) => {
       }
       return products
 }
-

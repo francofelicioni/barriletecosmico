@@ -1,6 +1,5 @@
 import fs from 'fs';
-import { productsFactory } from '../../../utils/utils.js';
-
+import { productsSeeder } from '../../../utils/productSeeder';
 class ProductManager {
   constructor() {
     this.products = [];
@@ -12,8 +11,8 @@ class ProductManager {
       const exists = fs.existsSync(this.path);
 
       if (!exists) {
-        const productSeeder = productsFactory(20); 
-        const stringData = JSON.stringify(productSeeder, null, 2);
+        const productFactory = productsSeeder(20); 
+        const stringData = JSON.stringify(productFactory, null, 2);
         fs.writeFileSync(this.path, stringData);
         console.log('file created!');
       } else {
