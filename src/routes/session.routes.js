@@ -1,5 +1,6 @@
 import { Router } from "express";
 import userDao from "../dao/mongoDao/user.dao.js";
+import { hashPassword } from "../utils/passwordHash.js";
 
 const router = Router();
 
@@ -9,23 +10,36 @@ router.get('/logout', logout)
 
 async function register(req, res) {
     try {
-        const userData = req.body
-        
-        const userExists = await userDao.getUserByEmail(userData.email)
-        if (userExists) return res.status(400).json({ status: 'Error', message: 'User already exists' })
+        const { first_name, last_name, age, email, password } = req.body;
 
-        const newUser = await userDao.createUser(userData)
-        if (!newUser) return res.status(400).json({ status: 'Error', message: 'User cannot be created' })
+        const existingUser = await userDao.getUserByEmail(email);
+        if (existingUser) {
+            return res.status(400).json({ status: 'Error', message: 'User already exists' });
+        }
 
-        return res.status(201).json({ status: 'success', payload: newUser })
+        if (!email || !password) {
+            return res.status(400).json({ status: 'Error', message: 'Email and password are required' });
+        }
+
+        const newUser = {
+            first_name,
+            last_name,
+            age,
+            email,
+            password: await hashPassword(password)
+        };
+
+        const createdUser = await userDao.createUser(newUser);
+
+        return res.status(201).json({ status: 'success', payload: createdUser });
     } catch (error) {
-        return res.status(500).json({ status:'Error', message: 'Internal Server Error' })
+        return res.status(500).json({ status: 'Error', message: 'Internal Server Error' });
     }
 }
 async function login(req, res) {
     try {
-        const {email, password} = req.body
-        
+        const { email, password } = req.body
+
         if (email === 'admiCoder@coder.com' && password === 'adminCod3r123') {
             req.session.user = {
                 email,
@@ -37,7 +51,7 @@ async function login(req, res) {
 
         const user = await userDao.getUserByEmail(email)
 
-        if (!user || user.password !== password) return res.status(400).json({ status: 'Error', message: 'Email or password not valid' })
+        if (!user || user.password !== comparePassword(user, password)) return res.status(400).json({ status: 'Error', message: 'Email or password not valid' })
 
         req.session.user = {
             email,
@@ -47,16 +61,16 @@ async function login(req, res) {
         return res.status(200).json({ status: 'success', message: 'User logged in', payload: req.session.user })
 
     } catch (error) {
-        return res.status(500).json({ status:'Error', message: 'Internal Server Error' })
+        return res.status(500).json({ status: 'Error', message: 'Internal Server Error' })
     }
 }
 async function logout(req, res) {
-  try {
-    req.session.destroy();
-    return res.status(200).json({ status: 'success', message: 'User logged out' });
-  } catch (error) {
-    return res.status(500).json({ status: 'Error', message: 'Internal Server Error' });
-  }
+    try {
+        req.session.destroy();
+        return res.status(200).json({ status: 'success', message: 'User logged out' });
+    } catch (error) {
+        return res.status(500).json({ status: 'Error', message: 'Internal Server Error' });
+    }
 }
 
 export default router
