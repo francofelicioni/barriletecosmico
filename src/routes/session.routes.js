@@ -1,6 +1,6 @@
 import { Router } from "express";
 import userDao from "../dao/mongoDao/user.dao.js";
-import { hashPassword } from "../utils/passwordHash.js";
+import { hashPassword, isValidPassword } from "../utils/passwordHash.js";
 
 const router = Router();
 
@@ -50,8 +50,7 @@ async function login(req, res) {
         }
 
         const user = await userDao.getUserByEmail(email)
-
-        if (!user || user.password !== comparePassword(user, password)) return res.status(400).json({ status: 'Error', message: 'Email or password not valid' })
+        if (!user || !isValidPassword(user, password)) return res.status(400).json({ status: 'Error', message: 'Email or password not valid' })
 
         req.session.user = {
             email,
@@ -61,6 +60,7 @@ async function login(req, res) {
         return res.status(200).json({ status: 'success', message: 'User logged in', payload: req.session.user })
 
     } catch (error) {
+        console.log(error)
         return res.status(500).json({ status: 'Error', message: 'Internal Server Error' })
     }
 }
