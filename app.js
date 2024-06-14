@@ -4,6 +4,7 @@ import session from 'express-session';
 import passport from 'passport';
 import MongoStore from 'connect-mongo';
 import { connectMongoDB } from './src/config/mongoDB.config.js';
+import initializePassport from './src/config/passport.config.js';
 const port = 8080;
 const ready = console.log(`Server ready on port ${port}`);
 const dbPassword = process.env.DB_PASSWORD
@@ -20,16 +21,18 @@ const sessionStore = MongoStore.create({
 app.use(
   express.json(),
   express.urlencoded({ extended: false }),
-  passport.initialize(),
-  passport.session(),
   session({
     store: sessionStore,
     secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
+    resave: true,
+    saveUninitialized: true,
     cookie: { maxAge: 15 * 60 * 1000 },
-  })
+  }),
+  passport.initialize(),
+  passport.session()
 );
+
+initializePassport();
 
 app.use('/api', router);
 app.listen(port, ready);
