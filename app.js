@@ -1,6 +1,7 @@
 import express from 'express';
 import router from './src/routes/index.js';
 import session from 'express-session';
+import passport from 'passport';
 import MongoStore from 'connect-mongo';
 import { connectMongoDB } from './src/config/mongoDB.config.js';
 const port = 8080;
@@ -19,6 +20,8 @@ const sessionStore = MongoStore.create({
 app.use(
   express.json(),
   express.urlencoded({ extended: false }),
+  passport.initialize(),
+  passport.session(),
   session({
     store: sessionStore,
     secret: process.env.SESSION_SECRET,
