@@ -66,12 +66,13 @@ const initializePassport = () => {
         },
         async (accessToken, refreshToken, profile, cb) => {
             try {
-                const { name, emails } = profile;
+                const { name, emails, picture } = profile;
                 console.log(profile);
                 const user = {
                     first_name: name.givenName,
                     last_name: name.familyName,
                     email: emails[0].value,
+                    profile_picture: picture,
                 };
 
                 const existUser = await userDao.getUserByEmail( emails[0].value);
