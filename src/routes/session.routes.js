@@ -1,38 +1,19 @@
 import { Router } from "express";
 import userDao from "../dao/mongoDao/user.dao.js";
-import { hashPassword, isValidPassword } from "../utils/passwordHash.js";
+import { isValidPassword } from "../utils/passwordHash.js";
+import passport from 'passport';
 
 const router = Router();
 
-router.post('/register', register)
+router.post('/register', passport.authenticate('register'), register)
 router.post('/login', login)
 router.get('/logout', logout)
 
 async function register(req, res) {
     try {
-        const { first_name, last_name, age, email, password } = req.body;
-
-        const existingUser = await userDao.getUserByEmail(email);
-        if (existingUser) {
-            return res.status(400).json({ status: 'Error', message: 'User already exists' });
-        }
-
-        if (!email || !password) {
-            return res.status(400).json({ status: 'Error', message: 'Email and password are required' });
-        }
-
-        const newUser = {
-            first_name,
-            last_name,
-            age,
-            email,
-            password: await hashPassword(password)
-        };
-
-        const createdUser = await userDao.createUser(newUser);
-
-        return res.status(201).json({ status: 'success', payload: createdUser });
+        return res.status(201).json({ status: 'success', message: 'User created' });
     } catch (error) {
+        console.log(error)
         return res.status(500).json({ status: 'Error', message: 'Internal Server Error' });
     }
 }
