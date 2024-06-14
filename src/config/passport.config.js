@@ -1,10 +1,11 @@
 import passport from "passport";
 import local from "passport-local";
-import { hashPassword, isValidPassword } from "../utils/passwordHash.js";
 import userDao from "../dao/mongoDao/user.dao.js";
-
+import google from 'passport-google-oauth2';
+import { hashPassword, isValidPassword } from "../utils/passwordHash.js";
 
 const LocalStrategy = local.Strategy;
+const GoogleStrategy = google.Strategy;
 
 const initializePassport = () => {
 
@@ -57,6 +58,35 @@ const initializePassport = () => {
         }
     ));
 
+    passport.use('google', new GoogleStrategy(
+        {
+            clientID: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            callbackURL: process.env.GOOGLE_CALLBACK_URL,
+        },
+        async (accessToken, refreshToken, profile, cb) => {
+            try {
+                const { name, emails } = profile;
+                console.log(profile);
+                const user = {
+                    first_name: name.givenName,
+                    last_name: name.familyName,
+                    email: emails[0].value,
+                };
+
+                const existUser = await userDao.getUserByEmail( emails[0].value);
+                if (existUser) {
+                    return cb(null, existUser);
+                }
+
+                const createdUser = await userDao.createUser(user);
+                return cb(null, createdUser);
+            } catch (error) {
+                return done(error);
+            }
+        }
+        
+    ));
 }
 
 export default initializePassport;
