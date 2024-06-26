@@ -15,16 +15,9 @@ router.get('/google', passport.authenticate('google', {
 router.post('/jwt', jwtLogin);
 router.get('/logout', logout);
 
-router.get('/current', (req, res) => {
+router.get('/current', passport.authenticate('jwt', { session: false }), (req, res) => {
     try {
-        const token = req.cookies.token;
-
-        const tokenVerified = verifyToken(token);
-
-        if (!tokenVerified) return res.status(200).json({ status: 'success', message: 'Invalid token' })
-        
-        return res.status(200).json({ status: 'success', message: 'User logged in' , payload: tokenVerified })
-
+        return res.status(200).json({ status: 'success', message: 'User logged in', payload: req.user })
     } catch (error) {
         console.log(error)
     }
