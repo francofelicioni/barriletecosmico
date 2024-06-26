@@ -3,7 +3,7 @@ import passport from 'passport';
 import userDao from "../dao/mongoDao/user.dao.js";
 import { generateToken, verifyToken } from "../utils/jwt.js";
 import { isValidPassword } from "../utils/passwordHash.js";
-import { passportCall } from "../middlewares/passport.middleware.js";
+import { authorization, passportCall } from "../middlewares/passport.middleware.js";
 
 const router = Router();
 
@@ -16,11 +16,12 @@ router.get('/google', passport.authenticate('google', {
 router.post('/jwt', jwtLogin);
 router.get('/logout', logout);
 
-router.get('/current', passportCall('jwt'), (req, res) => {
+router.get('/current', passportCall('jwt'), authorization("user"), (req, res) => {
     try {
         return res.status(200).json({ status: 'success', message: 'User logged in', payload: req.user })
     } catch (error) {
         console.log(error)
+        return res.status(500).json({ status: 'Error', message: 'Internal Server Error' })
     }
 })
 
