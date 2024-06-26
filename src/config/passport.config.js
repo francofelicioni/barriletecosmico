@@ -29,7 +29,7 @@ const initializePassport = () => {
     passport.use('register', new LocalStrategy({ passReqToCallback: true, usernameField: "email" },
         async (req, userName, password, done) => {
             try {
-                const { first_name, last_name, email, age } = req.body;
+                const { first_name, last_name, email, age, role } = req.body;
 
                 const user = await userDao.getUserByEmail(userName);
                 if (user) {
@@ -41,7 +41,8 @@ const initializePassport = () => {
                     last_name,
                     age,
                     email,
-                    password: await hashPassword(password)
+                    password: await hashPassword(password),
+                    role
                 };
 
                 const createdUser = await userDao.createUser(newUser);
