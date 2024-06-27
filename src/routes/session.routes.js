@@ -4,6 +4,7 @@ import userDao from "../dao/mongoDao/user.dao.js";
 import { generateToken, verifyToken } from "../utils/jwt.js";
 import { isValidPassword } from "../utils/passwordHash.js";
 import { authorization, passportCall } from "../middlewares/passport.middleware.js";
+import { userLoginValidator } from "../validators/userLogin.validator.js";
 
 const router = Router();
 
@@ -13,7 +14,7 @@ router.get('/google', passport.authenticate('google', {
     scope: ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/userinfo.profile'],
     session: false,
 }), googleLogin);
-router.post('/jwt', jwtLogin);
+router.post('/jwt', userLoginValidator, jwtLogin);
 router.get('/logout', logout);
 
 router.get('/current', passportCall('jwt'), authorization("user"), (req, res) => {
