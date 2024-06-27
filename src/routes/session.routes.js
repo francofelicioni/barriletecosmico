@@ -5,10 +5,11 @@ import { generateToken, verifyToken } from "../utils/jwt.js";
 import { isValidPassword } from "../utils/passwordHash.js";
 import { authorization, passportCall } from "../middlewares/passport.middleware.js";
 import { userLoginValidator } from "../validators/userLogin.validator.js";
+import { userRegisterValidator } from "../validators/userRegister.validator.js";
 
 const router = Router();
 
-router.post('/register', passport.authenticate('register', { session: false }), register);
+router.post('/register', passport.authenticate('register', { session: false }), userRegisterValidator, register);
 router.post('/login', passport.authenticate('login'), login);
 router.get('/google', passport.authenticate('google', {
     scope: ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/userinfo.profile'],
