@@ -1,14 +1,15 @@
 import { Router } from "express";
 import { productModel } from "../dao/models/product.model.js";
 import productDao from "../dao/mongoDao/product.dao.js";
+import { authorization, passportCall } from "../middlewares/passport.middleware.js";
 
 const router = Router();
 
 router.get('/', readAll);
 router.get('/:id', read);
-router.post('/', create)
-router.put('/:id', update)
-router.delete('/:id', destroy);
+router.post('/', passportCall('jwt'), authorization("user"), create)
+router.put('/:id', passportCall('jwt'), authorization("user"), update)
+router.delete('/:id', passportCall('jwt'), authorization("user"), destroy);
 
 async function readAll(req, res) {
     try {
