@@ -10,6 +10,9 @@ export const productDataValidator = [
     .notEmpty().withMessage('Description is required')
     .isString().withMessage('Description must be a string'),
 
+    body ('thumbnail')
+    .isArray().withMessage('Thumbnail must be an array'),
+
     body ('code')
     .notEmpty().withMessage('Code is required')
     .isAlphanumeric().withMessage('Code must be alphanumeric')
