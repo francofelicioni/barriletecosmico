@@ -1,11 +1,20 @@
 import passport from "passport";
 import local from "passport-local";
-import userDao from "../dao/mongoDao/user.dao.js";
 import google from 'passport-google-oauth2';
+import jwt from "passport-jwt";
+import userDao from "../dao/mongoDao/user.dao.js";
 import { hashPassword, isValidPassword } from "../utils/passwordHash.js";
 
 const LocalStrategy = local.Strategy;
 const GoogleStrategy = google.Strategy;
+const JTWStrategy = jwt.Strategy;
+const ExtractJWT = jwt.ExtractJwt;
+
+const cookieExtractor = (req) => {
+    let token = null;
+    if (req && req.cookies) token = req.cookies.token;
+    return token
+}
 
 const initializePassport = () => {
 
@@ -20,7 +29,7 @@ const initializePassport = () => {
     passport.use('register', new LocalStrategy({ passReqToCallback: true, usernameField: "email" },
         async (req, userName, password, done) => {
             try {
-                const { first_name, last_name, email, age } = req.body;
+                const { first_name, last_name, email, age, role } = req.body;
 
                 const user = await userDao.getUserByEmail(userName);
                 if (user) {
@@ -32,7 +41,8 @@ const initializePassport = () => {
                     last_name,
                     age,
                     email,
-                    password: await hashPassword(password)
+                    password: await hashPassword(password),
+                    role
                 };
 
                 const createdUser = await userDao.createUser(newUser);
@@ -87,6 +97,22 @@ const initializePassport = () => {
         }
         
     ));
+
+    passport.use('jwt', new JTWStrategy (
+        {
+            jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
+            secretOrKey: process.env.JWT_SECRET
+        },
+        async (jwtPayload, done) => {
+            try {
+                // const user = await userDao.getUserById(jwtPayload._id);
+                // return done(null, user);
+                return done(null,jwtPayload);
+            } catch (error) {
+                return done(error);
+            }
+        }
+    ))
 }
 
 export default initializePassport;

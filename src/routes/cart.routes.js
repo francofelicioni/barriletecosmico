@@ -1,16 +1,15 @@
 import { Router } from "express";
 import cartDao from "../dao/mongoDao/cartDao.js";
+import { authorization, passportCall } from "../middlewares/passport.middleware.js";
 const router = Router()
 
-router.get('/:cid', readOne);
-router.post('/', create)
+router.get('/:cid', passportCall('jwt'), authorization("user"), readOne);
+router.post('/', authorization("user"), create)
 router.post('/:cid/product/:pid', updateByOne)
 router.put('/:cid/product/:pid', updateAll)
-
-router.post('/:cid', update)
-
-router.delete('/:cid/product/:pid', destroyOne)
-router.delete('/:cid', destroyAll)
+router.post('/:cid', passportCall('jwt'), authorization("user"), update)
+router.delete('/:cid/product/:pid', passportCall('jwt'), authorization("user"), destroyOne)
+router.delete('/:cid', passportCall('jwt'), authorization("user"), destroyAll)
 
 async function readOne(req, res) {
   try {
