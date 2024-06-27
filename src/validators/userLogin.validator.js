@@ -11,7 +11,15 @@ export const userLoginValidator = [
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({ status: 'Error', payload: errors });
+
+            const formattedErrors = errors.array().map(error => {
+                return {
+                    data: error.path,
+                    message: error.msg
+                }
+            })
+
+            return res.status(400).json({ status: 'Error', errors: formattedErrors });
         }
         next();
     }
