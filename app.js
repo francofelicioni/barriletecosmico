@@ -8,8 +8,10 @@ import { connectMongoDB } from './src/config/mongoDB.config.js';
 import initializePassport from './src/config/passport.config.js';
 import envs from './src/config/envConfig.js';
 
-const ready = console.log(`Server ready on port ${envs.PORT}`);
-const URI = `mongodb+srv://franfelicioni:${envs.DB_PASSWORD}@bc-ecommerce.zt5qt94.mongodb.net/e-commerce`
+const port = envs.PORT;
+const ready = console.log(`Server ready on port ${port}`);
+const dbPassword = envs.DB_PASSWORD
+const URI = `mongodb+srv://franfelicioni:${dbPassword}@bc-ecommerce.zt5qt94.mongodb.net/e-commerce`
 
 connectMongoDB();
 
@@ -37,4 +39,4 @@ app.use(
 initializePassport();
 
 app.use('/api', router);
-app.listen(ready);
+app.listen(port, ready);
