@@ -4,6 +4,7 @@ import google from 'passport-google-oauth2';
 import jwt from "passport-jwt";
 import userDao from "../dao/mongoDao/user.dao.js";
 import { hashPassword, isValidPassword } from "../utils/passwordHash.js";
+import envs from "./envConfig.js";
 
 const LocalStrategy = local.Strategy;
 const GoogleStrategy = google.Strategy;
@@ -70,9 +71,9 @@ const initializePassport = () => {
 
     passport.use('google', new GoogleStrategy(
         {
-            clientID: process.env.GOOGLE_CLIENT_ID,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-            callbackURL: process.env.GOOGLE_CALLBACK_URL,
+            clientID: envs.GOOGLE_CLIENT_ID,
+            clientSecret: envs.GOOGLE_CLIENT_SECRET,
+            callbackURL: envs.GOOGLE_CALLBACK_URL,
         },
         async (accessToken, refreshToken, profile, cb) => {
             try {
@@ -101,7 +102,7 @@ const initializePassport = () => {
     passport.use('jwt', new JTWStrategy (
         {
             jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
-            secretOrKey: process.env.JWT_SECRET
+            secretOrKey: envs.JWT_SECRET
         },
         async (jwtPayload, done) => {
             try {
