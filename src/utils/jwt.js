@@ -2,8 +2,8 @@ import jwt from "jsonwebtoken";
 import envs from "../config/envConfig.js";
 
 export const generateToken = (user) => {
-    const { _id, email, role } = user;
-    const token = jwt.sign({ _id, email, role }, envs.JWT_SECRET, { expiresIn: '5m' });
+    const { _id, email, role, cart } = user;
+    const token = jwt.sign({ _id, email, role, cart }, envs.JWT_SECRET, { expiresIn: '5m' });
     return token
 }
 
