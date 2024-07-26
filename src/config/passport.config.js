@@ -5,6 +5,7 @@ import jwt from "passport-jwt";
 import userRepository from "../persistence/mongo/repositories/user.repository.js";
 import { hashPassword, isValidPassword } from "../utils/passwordHash.js";
 import envs from "./envConfig.js";
+import cartsRepository from "../persistence/mongo/repositories/carts.repository.js";
 
 const LocalStrategy = local.Strategy;
 const GoogleStrategy = google.Strategy;
@@ -37,13 +38,16 @@ const initializePassport = () => {
                     return done(null, false, { message: 'User already exists' });
                 }
 
+                const cart = await cartsRepository.create();
+
                 const newUser = {
                     first_name,
                     last_name,
                     age,
                     email,
                     password: await hashPassword(password),
-                    role
+                    role,
+                    cart: cart._id
                 };
 
                 const createdUser = await userRepository.create(newUser);
