@@ -1,4 +1,5 @@
 import { generateToken } from "../utils/jwt.js";
+import { userResponseDto } from "../dto/user-response.dto.js";
 
 const register = async (req, res) => {
     try {
@@ -15,7 +16,8 @@ const login = async (req, res) => {
         const token = generateToken(req.user);
 
         res.cookie("token", token, { httpOnly: true });
-        return res.status(200).json({ status: 'success', message: 'User logged in', payload: user, token })
+        const userDto = userResponseDto(user);
+        return res.status(200).json({ status: 'success', message: 'User logged in', payload: userDto, token })
     } catch (error) {
         console.log(error)
         return res.status(500).json({ status: 'Error', message: 'Internal Server Error' })
