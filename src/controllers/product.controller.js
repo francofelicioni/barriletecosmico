@@ -1,7 +1,8 @@
-import productDao from "../dao/mongoDao/product.dao.js";
-import { productModel } from "../dao/models/product.model.js";
+import { productModel } from "../persistence/mongo/models/product.model.js";
+import productServices from "../services/product.services.js";
 
-const readAll = async (req, res) => {
+
+const getAll = async (req, res) => {
     try {
         const { limit, page, sort, category, status } = req.query;
 
@@ -13,37 +14,35 @@ const readAll = async (req, res) => {
         };
 
         if (status) {
-            const products = await productDao.getProducts({ status }, options)
-            return res.status(200).json(products)
+            const products = await productServices.getAll({ status }, options)
+            return res.status(200).json({status: 'success', products})
         }
 
         if (category) {
-            const products = await productDao.getProducts({ category }, options)
-            return res.status(200).json(products)
+            const products = await productServices.getAll({ category }, options)
+            return res.status(200).json({status: 'success', products})
         }
 
-        const products = await productDao.getProducts({}, options);
+        const products = await productServices.getAll({}, options);
 
         return products.docs.length
             ? res.json({ status: 200, products })
             : res.json({ status: 200, message: 'Not products founded' });
 
     } catch (error) {
+        console.log(error);
         return res.status(500).json({ status: 'Error', message: "500 Internal Server Error" });
     }
 }
 
-const read = async (req, res) => {
+const getById = async (req, res) => {
     try {
         const { id } = req.params;
-        const product = await productDao.getProductById(id);
+        const product = await productServices.getById(id);
 
-        if (product) {
-            return res.json({ status: 200, payload: product })
-        }
+        if (!product) return res.status(404).json({ status: "Error", response: `Product with id ${id} not founded!` });
 
-        return res.json({ status: 404, response: `Product with id ${id} not founded!` });
-
+        return res.status(200).json({ status: 'success', payload: product });
     } catch (error) {
         console.log(error)
         return res.json({ status: error.status || 500, response: error.message || "Error" })
@@ -53,7 +52,7 @@ const read = async (req, res) => {
 const create = async (req, res) => {
     try {
         const productData = req.body;
-        const newProduct = await productDao.createProduct(productData);
+        const newProduct = await productServices.create(productData);
 
         return res.status(201).json({ status: 'Success', payload: newProduct });
     } catch (error) {
@@ -66,7 +65,7 @@ const update = async (req, res) => {
         const { id } = req.params
         const productData = req.body
 
-        const dataUpdated = await productDao.updateProductById(id, productData)
+        const dataUpdated = await productServices.update(id, productData)
 
         if (!dataUpdated) {
             res.status(404).json({ status: "Error", meesage: `Not found product with id ${id}` })
@@ -80,13 +79,13 @@ const update = async (req, res) => {
     }
 }
 
-const destroy = async (req, res) => {
+const deleteOne = async (req, res) => {
     try {
         const { id } = req.params;
         const productToDelete = await productModel.findById(id);
 
         if (productToDelete) {
-            await productDao.deleteProductById(id);
+            await productServices.destroy(id);
             return res.json({ status: 200, message: 'Product deleted' })
         }
 
@@ -99,9 +98,9 @@ const destroy = async (req, res) => {
 }
 
 export default {
-    readAll,
-    read,
+    getAll,
+    getById,
     create,
     update,
-    destroy
+    deleteOne
 }

@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { productsSeeder } from '../../../utils/productSeeder';
+import { productsSeeder } from '../../utils/productSeeder';
 class ProductManager {
   constructor() {
     this.products = [];
