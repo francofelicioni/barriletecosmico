@@ -1,4 +1,5 @@
 import cartServices from "../services/cart.services.js";
+import ticketServices from "../services/ticket.services.js";
 
 const getById = async (req, res) => {
     try {
@@ -81,7 +82,30 @@ const deleteAllProductsInCart = async (req, res) => {
         res.status(200).json({ status: 'Success', payload: cartFounded })
 
     } catch (error) {
-        res.status(500).json({ status: 'Error', message: '500 Internal Server Error' })
+        return res.status(500).json({ status: 'Error', message: '500 Internal Server Error' })
+    }
+}
+
+const purchaseCart = async (req, res) => {
+    try {
+        const { cid } = req.params;
+        const cart = await cartServices.getById(cid);
+        const { email } = req.user.email
+
+        if (!cart) return res.status(404).json({ status: 'Error', message: `Cart with id ${cid} not founded` })
+
+        // Obtain cart total
+        const total = await cartServices.purchaseCart(cid);
+
+        // Create ticket
+        const ticket = await ticketServices.createTicket(email, total);
+
+        res.status(200).json({ status: 'Success', payload: ticket })
+
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ status: 'Error', message: '500 Internal Server Error' })
     }
 }
 
@@ -91,5 +115,6 @@ export default {
     addProductToCart,
     updateProductQuantityInCart,
     deleteProductFromCart,
-    deleteAllProductsInCart
+    deleteAllProductsInCart,
+    purchaseCart
 }
