@@ -5,13 +5,13 @@ const getById = async (req, res) => {
     try {
         const { cid } = req.params;
 
-        const cartFounded = await cartServices.getById(cid);
+        const cartFound = await cartServices.getById(cid);
 
-        if (cartFounded) {
-            return res.status(200).json({ message: 'success', payload: cartFounded })
+        if (cartFound) {
+            return res.status(200).json({ message: 'success', payload: cartFound })
         }
 
-        return json.status(404).message(`Cart not founded for id ${id}!`)
+        return json.status(404).message(`Cart not found for id ${id}!`)
 
     } catch (err) {
         return res.status(500).json({ status: 'Error', message: "500 Internal Server Error" });
@@ -76,10 +76,10 @@ const deleteAllProductsInCart = async (req, res) => {
     try {
         const { cid } = req.params
 
-        const cartFounded = cartServices.deleteAllProductsInCart(cid);
-        if (!cartFounded) return res.status(404).json({ status: "Error", message: `Cart with id ${cid} not founded` })
+        const cartFound = cartServices.deleteAllProductsInCart(cid);
+        if (!cartFound) return res.status(404).json({ status: "Error", message: `Cart with id ${cid} not found` })
 
-        res.status(200).json({ status: 'Success', payload: cartFounded })
+        res.status(200).json({ status: 'Success', payload: cartFound })
 
     } catch (error) {
         return res.status(500).json({ status: 'Error', message: '500 Internal Server Error' })
@@ -92,7 +92,7 @@ const purchaseCart = async (req, res) => {
         const cart = await cartServices.getById(cid);
         const { email } = req.user.email
 
-        if (!cart) return res.status(404).json({ status: 'Error', message: `Cart with id ${cid} not founded` })
+        if (!cart) return res.status(404).json({ status: 'Error', message: `Cart with id ${cid} not found` })
 
         // Obtain cart total
         const total = await cartServices.purchaseCart(cid);

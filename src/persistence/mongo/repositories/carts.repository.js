@@ -1,8 +1,8 @@
 import { cartModel } from "../models/cart.model.js";
 
 const getById = async (id) => {
-    const cartFounded = cartModel.findById(id);
-    return cartFounded;
+    const cartFound = cartModel.findById(id);
+    return cartFound;
 }
 
 const create = async (data) => {
@@ -12,17 +12,17 @@ const create = async (data) => {
 
 const addProductToCart = async (cid, pid) => {
 
-    const productFounded = await cartModel.findOneAndUpdate(
+    const productFound = await cartModel.findOneAndUpdate(
         { _id: cid, "products.product": pid },
         { $inc: { "products.$.quantity": 1 } },
         { new: true }
     );
 
-    if (!productFounded) {
+    if (!productFound) {
         return await cartModel.updateOne({ _id: cid }, { $push: { products: { product: pid, quantity: 1 } } }, { new: true });
     }
 
-    return productFounded;
+    return productFound;
 }
 
 const deleteProductFromCart = async (cid, pid) => {

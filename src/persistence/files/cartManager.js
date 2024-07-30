@@ -30,9 +30,9 @@ class CartManager {
 
     async getCartById(id) {
         await this.getCarts();
-        let cartFounded = this.carts.find(p => p.id === id);
+        let cartFound = this.carts.find(p => p.id === id);
 
-        return cartFounded;
+        return cartFound;
     }
 
     async addCart() {
@@ -52,7 +52,7 @@ class CartManager {
     async updateCart(cid, pid) {
         await this.getCarts();
         const cartIndex = this.carts.findIndex(c => c.id === (+cid));
-        if (cartIndex === -1) return `Not founded for id ${cid}`
+        if (cartIndex === -1) return `Not found for id ${cid}`
 
         const cart = this.carts[cartIndex];
         const productIndex = cart.products.findIndex(p => p.product === pid);
