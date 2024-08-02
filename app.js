@@ -1,12 +1,14 @@
+import MongoStore from 'connect-mongo';
+import cookieParser from 'cookie-parser';
 import express from 'express';
-import router from './src/routes/index.js';
 import session from 'express-session';
 import passport from 'passport';
-import cookieParser from 'cookie-parser';
-import MongoStore from 'connect-mongo';
+import envs from './src/config/envConfig.js';
 import { connectMongoDB } from './src/config/mongoDB.config.js';
 import initializePassport from './src/config/passport.config.js';
-import envs from './src/config/envConfig.js';
+import { errorHandler } from './src/errors/errorHandler.js';
+import router from './src/routes/index.js';
+import { generateProductMocks } from './src/mocks/product.mock.js';
 
 const port = envs.PORT;
 const ready = console.log(`Server ready on port ${port}`);
@@ -38,5 +40,13 @@ app.use(
 
 initializePassport();
 
+app.get('/mockingproducts', async (_req, res) => { 
+  const products = await generateProductMocks(100);
+  return res.json({ status: 'Mocking Success', payload: products })
+});
+
 app.use('/api', router);
+
+app.use(errorHandler);
+
 app.listen(port, ready);
