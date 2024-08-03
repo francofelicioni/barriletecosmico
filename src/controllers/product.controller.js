@@ -1,8 +1,6 @@
-import { productModel } from "../persistence/mongo/models/product.model.js";
 import productServices from "../services/product.services.js";
 
-
-const getAll = async (req, res) => {
+const getAll = async (req, res, next) => {
     try {
         const { limit, page, sort, category, status } = req.query;
 
@@ -26,41 +24,39 @@ const getAll = async (req, res) => {
         const products = await productServices.getAll({}, options);
 
         return products.docs.length
-            ? res.json({ status: 200, products })
-            : res.json({ status: 200, message: 'Not products founded' });
+            ? res.json({ status: 200,  message: 'Success', products })
+            : res.json({ status: 200, message: 'Not products found' });
 
     } catch (error) {
         console.log(error);
-        return res.status(500).json({ status: 'Error', message: "500 Internal Server Error" });
+        next(error);
     }
 }
 
-const getById = async (req, res) => {
+const getById = async (req, res, next) => {
     try {
         const { id } = req.params;
         const product = await productServices.getById(id);
-
-        if (!product) return res.status(404).json({ status: "Error", response: `Product with id ${id} not founded!` });
-
         return res.status(200).json({ status: 'success', payload: product });
     } catch (error) {
-        console.log(error)
-        return res.json({ status: error.status || 500, response: error.message || "Error" })
+        console.log(error);
+        next(error);
     }
 }
 
-const create = async (req, res) => {
+const create = async (req, res, next) => {
     try {
         const productData = req.body;
         const newProduct = await productServices.create(productData);
 
-        return res.status(201).json({ status: 'Success', payload: newProduct });
+        return res.status(200).json({ status: 'success', payload: newProduct })
     } catch (error) {
-        return res.status(500).json({ message: error.message });
+        console.log(error);
+        next(error);
     }
 }
 
-const update = async (req, res) => {
+const update = async (req, res, next) => {
     try {
         const { id } = req.params
         const productData = req.body
@@ -75,25 +71,23 @@ const update = async (req, res) => {
 
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ message: error.message });
+        next(error);
     }
 }
 
-const deleteOne = async (req, res) => {
+const deleteOne = async (req, res, next) => {
     try {
         const { id } = req.params;
-        const productToDelete = await productModel.findById(id);
 
-        if (productToDelete) {
-            await productServices.destroy(id);
-            return res.json({ status: 200, message: 'Product deleted' })
-        }
+        const product = await productServices.getById(id);
+        if (!product) return res.status(404).json({ status: 'Error', message: `Product with id ${id} not found` })
 
-        throw new Error(`Product with id ${id} not founded!`);
+        await productServices.deleteOne(id);
+        return res.status(200).json({ status: 'success', message: 'Product deleted' });
 
     } catch (error) {
-        console.log(error);
-        res.json({ status: error.status, response: error.message })
+        console.error(error);
+        next(error);
     }
 }
 
@@ -102,5 +96,5 @@ export default {
     getById,
     create,
     update,
-    deleteOne
+    deleteOne   
 }
