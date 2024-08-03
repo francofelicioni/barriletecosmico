@@ -1,8 +1,7 @@
 import { request, response } from "express";
+import customErrors from "../errors/customErrors.js";
 import cartServices from "../services/cart.services.js";
 import productServices from "../services/product.services.js";
-import { errorHandler } from "../errors/errorHandler.js";
-import customErrors from "../errors/customErrors.js";
 
 export const checkProductAndCart = async (req = request, res = response, next) => {
     const { cid, pid } = req.params;
