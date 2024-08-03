@@ -1,8 +1,11 @@
+import customErrors from "../errors/customErrors.js";
 import cartsRepository from "../persistence/mongo/repositories/carts.repository.js";
 import productsRepository from "../persistence/mongo/repositories/products.repository.js";
 
 const getById = async (id) => {
-   return await cartsRepository.getById(id);
+   const cart = await cartsRepository.getById(id);
+   if (!cart) throw customErrors.notFound(`Cart with id ${id} not found!`);
+   return cart;
 }
 
 const create = async () => {
@@ -22,7 +25,9 @@ const deleteProductFromCart = async (cid, pid) => {
 };
 
 const deleteAllProductsInCart = async (cartId) => {
-    return await cartsRepository.deleteAllProductsInCart(cartId);
+    const cart = cartsRepository.getById(cartId);
+    if (!cart) throw customErrors.notFound(`Cart with id ${cartId} not found!`);
+    return cart;
 }
 
 const purchaseCart = async (cid) => {
