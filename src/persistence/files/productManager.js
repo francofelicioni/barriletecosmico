@@ -73,9 +73,9 @@ class ProductManager {
   }
   async getProductById (id) {
     await this.getProducts();
-    let productFounded = this.products.find(p => p.id === id);
+    let productFound = this.products.find(p => p.id === id);
 
-    return productFounded;
+    return productFound;
   }
 
   async updateProduct (id, newData) {
@@ -95,7 +95,7 @@ class ProductManager {
     const newProductsArray = this.products.filter(p => p.id !== id)
 
     if (this.products.length === newProductsArray.length) {
-      console.log(`Product with id ${id} not founded, couldn't be deleted`);
+      console.log(`Product with id ${id} not found, couldn't be deleted`);
       return;
     } 
 

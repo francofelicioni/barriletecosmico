@@ -1,24 +1,25 @@
 import cartServices from "../services/cart.services.js";
 import ticketServices from "../services/ticket.services.js";
 
-const getById = async (req, res) => {
+const getById = async (req, res, next) => {
     try {
         const { cid } = req.params;
 
-        const cartFounded = await cartServices.getById(cid);
+        const cartFound = await cartServices.getById(cid);
 
-        if (cartFounded) {
-            return res.status(200).json({ message: 'success', payload: cartFounded })
+        if (cartFound) {
+            return res.status(200).json({ message: 'success', payload: cartFound })
         }
 
-        return json.status(404).message(`Cart not founded for id ${id}!`)
+        return json.status(404).message(`Cart not found for id ${id}!`)
 
-    } catch (err) {
-        return res.status(500).json({ status: 'Error', message: "500 Internal Server Error" });
+    } catch (error) {
+        console.log(error)
+        next(error);
     }
 }
 
-const createCart = async (_req, res) => {
+const createCart = async (_req, res, next) => {
     try {
         const newCart = await cartServices.create();
 
@@ -28,12 +29,13 @@ const createCart = async (_req, res) => {
 
         throw new Error('Error: no data to create a new resource!');
 
-    } catch (err) {
-        return res.status(500).json({ status: 'Error', message: err.message });
+    } catch (error) {
+        console.log(error)
+        next(error);
     }
 }
 
-const addProductToCart = async (req, res) => {
+const addProductToCart = async (req, res, next) => {
 
     try {
         const { cid, pid } = req.params;
@@ -44,11 +46,12 @@ const addProductToCart = async (req, res) => {
 
         res.status(200).json({ status: "success", payload: cart });
     } catch (error) {
-        return res.status(500).json({ status: "Error", message: "500 Internal Server Error" });
+        console.log(error)
+        next(error);
     }
 }
 
-const updateProductQuantityInCart = async (req, res) => {
+const updateProductQuantityInCart = async (req, res, next) => {
     try {
         const { cid } = req.params;
         const cart = await cartServices.updateProductQuantityInCart(cid, body)
@@ -57,42 +60,45 @@ const updateProductQuantityInCart = async (req, res) => {
 
         res.status(200).json({ status: "success", payload: cart });
     } catch (error) {
-        return res.status(500).json({ status: "Error", message: "500 Internal Server Error" });
+        console.log(error)
+        next(error);
     }
 }
 
-const deleteProductFromCart = async (req, res) => {
+const deleteProductFromCart = async (req, res, next) => {
     try {
         const { cid, pid } = req.params;
         const cart = await cartServices.deleteProductFromCart(cid, pid)
         
         res.status(200).json({ status: "success", payload: cart });
     } catch (error) {
-        return res.status(500).json({ status: "Error", message: "500 Internal Server Error" });
+        console.log(error)
+        next(error);
     }
 }
 
-const deleteAllProductsInCart = async (req, res) => {
+const deleteAllProductsInCart = async (req, res, next) => {
     try {
         const { cid } = req.params
 
-        const cartFounded = cartServices.deleteAllProductsInCart(cid);
-        if (!cartFounded) return res.status(404).json({ status: "Error", message: `Cart with id ${cid} not founded` })
+        const cartFound = cartServices.deleteAllProductsInCart(cid);
+        if (!cartFound) return res.status(404).json({ status: "Error", message: `Cart with id ${cid} not found` })
 
-        res.status(200).json({ status: 'Success', payload: cartFounded })
+        res.status(200).json({ status: 'Success', payload: cartFound })
 
     } catch (error) {
-        return res.status(500).json({ status: 'Error', message: '500 Internal Server Error' })
+        console.log(error);
+        next (error);
     }
 }
 
-const purchaseCart = async (req, res) => {
+const purchaseCart = async (req, res, next) => {
     try {
         const { cid } = req.params;
         const cart = await cartServices.getById(cid);
         const { email } = req.user.email
 
-        if (!cart) return res.status(404).json({ status: 'Error', message: `Cart with id ${cid} not founded` })
+        if (!cart) return res.status(404).json({ status: 'Error', message: `Cart with id ${cid} not found` })
 
         // Obtain cart total
         const total = await cartServices.purchaseCart(cid);
@@ -102,10 +108,9 @@ const purchaseCart = async (req, res) => {
 
         res.status(200).json({ status: 'Success', payload: ticket })
 
-
     } catch (error) {
         console.log(error);
-        return res.status(500).json({ status: 'Error', message: '500 Internal Server Error' })
+        next (error);
     }
 }
 
