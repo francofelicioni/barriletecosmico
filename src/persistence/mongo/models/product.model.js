@@ -16,6 +16,7 @@ const productSchema = new mongoose.Schema({
   },
   code: {
     type: String,
+    unique: true,
     require: true,
   },
   stock: {
