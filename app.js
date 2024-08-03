@@ -40,10 +40,6 @@ app.use(
 
 initializePassport();
 
-app.get('/mockingproducts', async (_req, res) => { 
-  const products = await generateProductMocks(100);
-  return res.json({ status: 'Mocking Success', payload: products })
-});
 
 app.use('/api', router);
 
