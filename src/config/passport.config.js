@@ -82,7 +82,6 @@ const initializePassport = () => {
         async (accessToken, refreshToken, profile, cb) => {
             try {
                 const { name, emails } = profile;
-                console.log(profile);
                 const user = {
                     first_name: name.givenName,
                     last_name: name.familyName,

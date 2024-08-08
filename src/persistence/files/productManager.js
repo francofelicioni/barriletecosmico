@@ -1,5 +1,6 @@
 import fs from 'fs';
 import { productsSeeder } from '../../utils/productSeeder';
+import { logger } from '../../utils/logger.js';
 class ProductManager {
   constructor() {
     this.products = [];
@@ -14,9 +15,9 @@ class ProductManager {
         const productFactory = productsSeeder(20); 
         const stringData = JSON.stringify(productFactory, null, 2);
         fs.writeFileSync(this.path, stringData);
-        console.log('file created!');
+        logger.info('file created!')
       } else {
-        console.log('file connected');
+        logger.info('file connected!')
       }
       
     } catch (error) {
@@ -58,15 +59,15 @@ class ProductManager {
     let productExists = this.products.find(p => p.code === code);
 
     if (productExists) {
-      console.log(`Error, product already exist with code ${code}`)
+      logger.error(`Error, product already exist with code ${code}`)
       return;
     }
 
     if (Object.values(newProduct).includes(undefined)) {
-      console.log("Error: All fields must be completed");
+      logger.error(`Error: All fields must be completed`)
       return;
     } else {
-      console.log('Product Added!')
+      logger.info(`Product Added!`)
       this.products.push(newProduct);
       await fs.promises.writeFile(this.path, JSON.stringify(this.products));
     }
@@ -95,12 +96,12 @@ class ProductManager {
     const newProductsArray = this.products.filter(p => p.id !== id)
 
     if (this.products.length === newProductsArray.length) {
-      console.log(`Product with id ${id} not found, couldn't be deleted`);
+      logger.error(`Product with id ${id} not found, couldn't be deleted`)
       return;
     } 
 
     await fs.promises.writeFile(this.path, JSON.stringify(newProductsArray));
-    console.log(`Product with id ${id} successfully deleted`)
+    logger.info(`Product with id ${id} successfully deleted`)
   }
 }
 

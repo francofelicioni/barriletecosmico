@@ -1,11 +1,12 @@
 import { generateToken } from "../utils/jwt.js";
 import { userResponseDto } from "../dto/user-response.dto.js";
+import { logger } from "../utils/logger.js";
 
 const register = async (_req, res, next) => {
     try {
         return res.status(201).json({ status: 'success', message: 'User created' });
     } catch (error) {
-        console.log(error)
+        logger.error(error)
         next(error);
     }
 }
@@ -19,7 +20,7 @@ const login = async (req, res, next) => {
         const userDto = userResponseDto(user);
         return res.status(200).json({ status: 'success', message: 'User logged in', payload: userDto, token })
     } catch (error) {
-        console.log(error)
+        logger.error(error)
         next(error);
     }
 }
@@ -27,7 +28,7 @@ const googleLogin = async (req, res, next) => {
     try {
         return res.status(200).json({ status: 'success', message: 'User logged in', payload: req.user })
     } catch (error) {
-        console.log(error)
+        logger.error(error)
         next(error);
     }
 }
@@ -37,7 +38,7 @@ const current = async (req, res, next) => {
         const user = userResponseDto(req.user);
         return res.status(200).json({ status: 'success', message: 'User logged in', payload: user })
     } catch (error) {
-        console.log(error)
+        logger.error(error)
         next(error);
     }
 }
@@ -47,7 +48,7 @@ const logout = async (req, res, next) => {
         req.session.destroy();
         return res.status(200).json({ status: 'success', message: 'User logged out' });
     } catch (error) {
-        console.log(error)
+        logger.error(error)
         next(error);
     }
 }

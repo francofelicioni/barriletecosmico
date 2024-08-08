@@ -1,4 +1,5 @@
 import fs from 'fs'
+import { logger } from '../../utils/logger.js';
 
 class CartManager {
     constructor() {
@@ -12,9 +13,9 @@ class CartManager {
     
           if (!exists) {
             fs.writeFileSync(this.path, '[]');
-            console.log('file created!');
-          } else {
-            console.log('file connected');
+            logger.info('file created!')
+        } else {
+            logger.info('file connected!')
           }
           
         } catch (error) {

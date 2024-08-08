@@ -8,7 +8,7 @@ import { connectMongoDB } from './src/config/mongoDB.config.js';
 import initializePassport from './src/config/passport.config.js';
 import { errorHandler } from './src/errors/errorHandler.js';
 import router from './src/routes/index.js';
-import { generateProductMocks } from './src/mocks/product.mock.js';
+import { logger } from './src/utils/logger.js';
 
 const port = envs.PORT;
 const ready = console.log(`Server ready on port ${port}`);
@@ -45,4 +45,7 @@ app.use('/api', router);
 
 app.use(errorHandler);
 
-app.listen(port, ready);
+app.listen(port, ()=> {
+    ready,
+    logger.info(`Server ready on port ${port}`)
+})

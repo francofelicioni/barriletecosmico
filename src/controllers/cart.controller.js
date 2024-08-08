@@ -1,5 +1,6 @@
 import cartServices from "../services/cart.services.js";
 import ticketServices from "../services/ticket.services.js";
+import { logger } from "../utils/logger.js";
 
 const getById = async (req, res, next) => {
     try {
@@ -14,7 +15,7 @@ const getById = async (req, res, next) => {
         return json.status(404).message(`Cart not found for id ${id}!`)
 
     } catch (error) {
-        console.log(error)
+        logger.error(error)
         next(error);
     }
 }
@@ -30,7 +31,7 @@ const createCart = async (_req, res, next) => {
         throw new Error('Error: no data to create a new resource!');
 
     } catch (error) {
-        console.log(error)
+        logger.error(error)
         next(error);
     }
 }
@@ -46,7 +47,7 @@ const addProductToCart = async (req, res, next) => {
 
         res.status(200).json({ status: "success", payload: cart });
     } catch (error) {
-        console.log(error)
+        logger.error(error)
         next(error);
     }
 }
@@ -60,7 +61,7 @@ const updateProductQuantityInCart = async (req, res, next) => {
 
         res.status(200).json({ status: "success", payload: cart });
     } catch (error) {
-        console.log(error)
+        logger.error(error)
         next(error);
     }
 }
@@ -72,7 +73,7 @@ const deleteProductFromCart = async (req, res, next) => {
         
         res.status(200).json({ status: "success", payload: cart });
     } catch (error) {
-        console.log(error)
+        logger.error(error)
         next(error);
     }
 }
@@ -87,7 +88,7 @@ const deleteAllProductsInCart = async (req, res, next) => {
         res.status(200).json({ status: 'Success', payload: cartFound })
 
     } catch (error) {
-        console.log(error);
+        logger.error(error);
         next (error);
     }
 }
@@ -109,7 +110,7 @@ const purchaseCart = async (req, res, next) => {
         res.status(200).json({ status: 'Success', payload: ticket })
 
     } catch (error) {
-        console.log(error);
+        logger.error(error);
         next (error);
     }
 }
