@@ -1,5 +1,4 @@
 import { fakerEN_GB as faker } from "@faker-js/faker";
-import { productModel } from "../persistence/mongo/models/product.model.js";
 
 export const generateProductMocks = async (quantity = 100) => {
   const products = [];
@@ -20,6 +19,5 @@ export const generateProductMocks = async (quantity = 100) => {
     products.push(product);
   }
 
-  productModel.insertMany(products);
   return products;
 }
