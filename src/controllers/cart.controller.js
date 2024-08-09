@@ -28,7 +28,7 @@ const createCart = async (_req, res, next) => {
             return res.status(201).json({ message: "success", payload: newCart })
         }
 
-        throw new Error('Error: no data to create a new resource!');
+        throw customErrors.notFound(`Error: no data to create a new resource!`)
 
     } catch (error) {
         logger.error(error)
@@ -42,8 +42,8 @@ const addProductToCart = async (req, res, next) => {
         const { cid, pid } = req.params;
         const cart = await cartServices.addProductToCart(cid, pid)
 
-        if (cart.product == false) return res.status(404).json({ status: "Error", msg: `No se encontró el producto con el id ${pid}` });
-        if (cart.cart == false) return res.status(404).json({ status: "Error", msg: `No se encontró el carrito con el id ${cid}` });
+        if (cart.product == false) throw customErrors.notFound(`Product with id ${pid} not found!`);
+        if (cart.cart == false) throw customErrors.notFound(`Cart with id ${cid} not found!`);
 
         res.status(200).json({ status: "success", payload: cart });
     } catch (error) {
@@ -57,7 +57,7 @@ const updateProductQuantityInCart = async (req, res, next) => {
         const { cid } = req.params;
         const cart = await cartServices.updateProductQuantityInCart(cid, body)
 
-        if (!cart.cart) return res.status(404).json({ status: "Error", msg: `No se encontró el carrito con el id ${cid}` });
+        if (!cart.product) throw customErrors.notFound(`Product with id ${pid} not found!`);
 
         res.status(200).json({ status: "success", payload: cart });
     } catch (error) {
@@ -83,7 +83,7 @@ const deleteAllProductsInCart = async (req, res, next) => {
         const { cid } = req.params
 
         const cartFound = cartServices.deleteAllProductsInCart(cid);
-        if (!cartFound) return res.status(404).json({ status: "Error", message: `Cart with id ${cid} not found` })
+        if (!cartFound) throw customErrors.notFound(`Cart with id ${cid} not found!`);
 
         res.status(200).json({ status: 'Success', payload: cartFound })
 
@@ -99,7 +99,7 @@ const purchaseCart = async (req, res, next) => {
         const cart = await cartServices.getById(cid);
         const { email } = req.user.email
 
-        if (!cart) return res.status(404).json({ status: 'Error', message: `Cart with id ${cid} not found` })
+        if (!cart) throw customErrors.notFound(`Cart with id ${cid} not found!`);
 
         // Obtain cart total
         const total = await cartServices.purchaseCart(cid);

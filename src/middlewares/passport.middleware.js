@@ -1,5 +1,6 @@
 import passport from "passport";
 import { request, response } from 'express';
+import customErrors from "../errors/customErrors.js";
 
 export const passportCall = (strategy) => {
 
@@ -9,10 +10,7 @@ export const passportCall = (strategy) => {
                 return next(err);
             }
             if (!user) {
-                return res.status(401).json({ 
-                    status: 'Error', 
-                    message: info.message ? info.message : info.toString() 
-                });
+               throw customErrors.unAuthorized(info.message);
             }
             req.user = user;
             return next();
@@ -24,11 +22,11 @@ export const passportCall = (strategy) => {
 export const authorization = (role) => {
     return async (req = request, res = response, next) => {
         if (!req.user) {
-            return res.status(401).json({ status: 'Error', message: 'User not authorized' })
+            throw customErrors.unAuthorized('User not logged in!');
         }
 
         if (req.user.role !== role) {
-            return res.status(403).json({ status: 'Error', message: 'User not authorized' })
+            throw customErrors.unAuthorized('User not authorized!');
         }
         next();
     }
