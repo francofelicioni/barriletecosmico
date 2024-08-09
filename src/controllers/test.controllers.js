@@ -1,6 +1,7 @@
 import fs from 'fs'
+import customErrors from '../errors/customErrors.js';
 
-const path = 'logs/app.logs'
+const path = 'logs/app.log'
 
 export const loggerTest = async (req, res) => {
     try {
