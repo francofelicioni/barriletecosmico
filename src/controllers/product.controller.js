@@ -40,7 +40,7 @@ const getById = async (req, res, next) => {
         const product = await productServices.getById(id);
         return res.status(200).json({ status: 'success', payload: product });
     } catch (error) {
-        logger.log('error', error.message);
+        logger.error(error)
         next(error);
     }
 }
@@ -68,7 +68,7 @@ const update = async (req, res, next) => {
         return res.status(200).json({ status: 'success', payload: dataUpdated })
 
     } catch (error) {
-        console.error(error);
+        logger.error(error)
         next(error);
     }
 }
@@ -84,6 +84,7 @@ const deleteOne = async (req, res, next) => {
         return res.status(200).json({ status: 'success', message: 'Product deleted' });
 
     } catch (error) {
+        logger.error(error)
         next(error);
     }
 }
