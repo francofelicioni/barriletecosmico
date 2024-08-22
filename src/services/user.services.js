@@ -21,8 +21,18 @@ const resetPassword = async (email, password) => {
     return await userRepository.update(user._id, { password: hashPassword(password) });
 };
 
+const changeRole = async (uid) => {
+    const user = await userRepository.getById(uid);
+    if (!user) throw customErrors.notFound("User not found");
+
+    const userRole = user.role === "admin" ? "user" : "admin";
+
+    return await userRepository.update(uid, { role: userRole });
+};
+
 
 export default {
     sendEmailResetPassword,
-    resetPassword
+    resetPassword,
+    changeRole
 }

@@ -34,8 +34,24 @@ const resetPassword = async (req, res, next) => {
     }
 };
 
+const changeRole = async (req, res, next) => {
+    try {
+        const { uid } = req.params;
+
+        const response = await userServices.changeRole(uid);
+
+        if (!response) throw customErrors.notFound(`User with id ${uid} not found`);
+        
+        res.status(200).json({ status: "ok", message: "Role updated" });
+    } catch (error) {
+        error.path = "[GET] /api/user/premium/:uid";
+        next(error);
+    }
+};
+
 
 export default {
     sendResetEmail,
-    resetPassword
+    resetPassword,
+    changeRole
 }

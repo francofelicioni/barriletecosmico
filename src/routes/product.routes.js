@@ -9,10 +9,10 @@ router.get('/', productController.getAll);
 
 router.get('/:id', productController.getById);
 
-router.post('/', passportCall('jwt'), authorization("admin"), productDataValidator, productController.create);
+router.post('/', passportCall('jwt'), authorization(['admin', 'premium']), productDataValidator, productController.create);
 
-router.put('/:id', passportCall('jwt'), authorization("admin"), productController.update);
+router.put('/:id', passportCall('jwt'), authorization(['admin', 'premium']), productController.update);
 
-router.delete('/:id', passportCall('jwt'), authorization("admin"), productController.deleteOne);
+router.delete('/:id', passportCall('jwt'), authorization(['admin', 'premium']), productController.deleteOne);
 
 export default router;

@@ -12,7 +12,11 @@ const create = async () => {
     return await cartsRepository.create()
 }
 
-const addProductToCart = async (cid, pid) => {
+const addProductToCart = async (cid, pid, user) => {
+    if (user.role === 'premium' && product.owner !== user._id) {
+        throw customErrors.unAuthorized("Only the owner can add a product");
+    }
+
     return await cartsRepository.addProductToCart(cid, pid);
 }
 
