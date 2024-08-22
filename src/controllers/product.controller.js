@@ -1,3 +1,4 @@
+import customErrors from "../errors/customErrors.js";
 import productServices from "../services/product.services.js";
 import { logger } from "../utils/logger.js";
 
@@ -14,18 +15,18 @@ const getAll = async (req, res, next) => {
 
         if (status) {
             const products = await productServices.getAll({ status }, options)
-            return res.status(200).json({status: 'success', products})
+            return res.status(200).json({ status: 'success', products })
         }
 
         if (category) {
             const products = await productServices.getAll({ category }, options)
-            return res.status(200).json({status: 'success', products})
+            return res.status(200).json({ status: 'success', products })
         }
 
         const products = await productServices.getAll({}, options);
 
         return products.docs.length
-            ? res.json({ status: 200,  message: 'Success', products })
+            ? res.json({ status: 200, message: 'Success', products })
             : res.json({ status: 200, message: 'Not products found' });
 
     } catch (error) {
@@ -48,9 +49,9 @@ const getById = async (req, res, next) => {
 const create = async (req, res, next) => {
     try {
         const productData = req.body;
-        const newProduct = await productServices.create(productData);
+        const newProduct = await productServices.create(productData, req.user);
 
-        return res.status(200).json({ status: 'success', payload: newProduct })
+        return res.status(201).json({ status: 'success', payload: newProduct })
     } catch (error) {
         logger.error(error)
         next(error);
@@ -64,7 +65,7 @@ const update = async (req, res, next) => {
 
         const dataUpdated = await productServices.update(id, productData)
 
-        if (!dataUpdated) throw error.notFoundError(`Product id ${id} not found`);
+        if (!dataUpdated) throw customErrors.notFound(`Product id ${id} not found`);
         return res.status(200).json({ status: 'success', payload: dataUpdated })
 
     } catch (error) {
@@ -75,24 +76,20 @@ const update = async (req, res, next) => {
 
 const deleteOne = async (req, res, next) => {
     try {
-        const { id } = req.params;
+        const { pid } = req.params;
+        const product = await productServices.destroy(pid, req.user);
+        if (!product) return res.status(404).json({ status: "Error", msg: `Product with id ${pid} not found` });
 
-        const product = await productServices.getById(id);
-        if (!product) throw error.notFoundError(`Product id ${id} not found`);
-
-        await productServices.deleteOne(id);
-        return res.status(200).json({ status: 'success', message: 'Product deleted' });
-
+        res.status(200).json({ status: "success", payload: "Product deleted" });
     } catch (error) {
-        logger.error(error)
         next(error);
     }
-}
+};
 
 export default {
     getAll,
     getById,
     create,
     update,
-    deleteOne   
+    deleteOne
 }

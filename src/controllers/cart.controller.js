@@ -1,3 +1,4 @@
+import customErrors from "../errors/customErrors.js";
 import cartServices from "../services/cart.services.js";
 import ticketServices from "../services/ticket.services.js";
 import { logger } from "../utils/logger.js";
@@ -12,7 +13,7 @@ const getById = async (req, res, next) => {
             return res.status(200).json({ message: 'success', payload: cartFound })
         }
 
-        return json.status(404).message(`Cart not found for id ${id}!`)
+        throw customErrors.notFound(`Cart not found for id ${id}`);
 
     } catch (error) {
         logger.error(error)
@@ -40,8 +41,7 @@ const addProductToCart = async (req, res, next) => {
 
     try {
         const { cid, pid } = req.params;
-        const cart = await cartServices.addProductToCart(cid, pid)
-
+        const cart = await cartServices.addProductToCart(cid, pid, req.user)
         if (cart.product == false) throw customErrors.notFound(`Product with id ${pid} not found!`);
         if (cart.cart == false) throw customErrors.notFound(`Cart with id ${cid} not found!`);
 
@@ -57,7 +57,7 @@ const updateProductQuantityInCart = async (req, res, next) => {
         const { cid } = req.params;
         const cart = await cartServices.updateProductQuantityInCart(cid, body)
 
-        if (!cart.product) throw customErrors.notFound(`Product with id ${pid} not found!`);
+        if (!cart) throw customErrors.notFound(`Product with id ${pid} not found!`);
 
         res.status(200).json({ status: "success", payload: cart });
     } catch (error) {
@@ -70,7 +70,7 @@ const deleteProductFromCart = async (req, res, next) => {
     try {
         const { cid, pid } = req.params;
         const cart = await cartServices.deleteProductFromCart(cid, pid)
-        
+
         res.status(200).json({ status: "success", payload: cart });
     } catch (error) {
         logger.error(error)
@@ -89,7 +89,7 @@ const deleteAllProductsInCart = async (req, res, next) => {
 
     } catch (error) {
         logger.error(error);
-        next (error);
+        next(error);
     }
 }
 
@@ -111,7 +111,7 @@ const purchaseCart = async (req, res, next) => {
 
     } catch (error) {
         logger.error(error);
-        next (error);
+        next(error);
     }
 }
 
