@@ -1,0 +1,47 @@
+paths:
+  /api/products:
+    post:
+      tags:
+        - Products
+      summary: Create product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#components/requestBodies/createProduct"
+
+      responses:
+        "201":
+          description: Product successfully created.
+
+        "500":
+          description: Internal Server Error
+
+components:
+  requestBodies:
+    createProduct:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        thumbnail:
+          type: array
+        code:
+          type: string
+        stock:
+          type: integer
+        price:
+          type: number
+        category:
+          type: string
+      example:
+        title: "The art of giving everything a name"
+        description: "Sci-fi Book"
+        thumbnail: ["www.google.es"]
+        code: "ASD125"
+        stock: 10
+        price: 152.146
+        category: "Books"

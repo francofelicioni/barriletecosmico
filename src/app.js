@@ -9,6 +9,8 @@ import initializePassport from './config/passport.config.js';
 import router from './routes/index.js';
 import { errorHandler } from './errors/errorHandler.js';
 import { logger } from './utils/logger.js';
+import swaggerUiExpress from 'swagger-ui-express';
+import { specs } from './controllers/swagger.config.js';
 
 const port = envConfig.PORT;
 const ready = console.log(`Server ready on port ${port}`);
@@ -40,7 +42,7 @@ app.use(
 
 initializePassport();
 
-
+app.use('/api-docs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs));
 app.use('/api', router);
 
 app.use(errorHandler);
