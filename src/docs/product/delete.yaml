@@ -1,0 +1,59 @@
+paths:
+  /api/products/{pid}:
+    delete:
+      tags:
+        - Products
+      summary: Delete product by id
+      parameters:
+        - name: pid
+          in: path
+          description: Product id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Product successfully deleted.
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/ProductsById"
+        "404":
+          description: Product not found
+        "500":
+          description: Internal Server Error
+
+components:
+  schemas:
+    ProductsById:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+        title:
+          type: string
+        description:
+          type: string
+        thumbnail:
+          type: array
+        code:
+          type: string
+        stock:
+          type: integer
+        status:
+          type: boolean
+        price:
+          type: number
+        category:
+          type: string
+      example:
+        _id: "66bfcbee59656de3ea704c27"
+        title: "The art of giving everything a name"
+        description: "Sci-fi Book"
+        thumbnail: ["www.google.com"]
+        code: "ASD125"
+        stock: 10
+        status: true
+        price: 152.146
+        category: "Books"
+        owner: "admin"
