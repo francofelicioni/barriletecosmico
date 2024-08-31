@@ -45,7 +45,7 @@ components:
         _id: "66bfcbee59656de3ea704c27"
         title: "The art of giving everything a name"
         description: "Sci-fi Book"
-        thumbnail: ["www.google.com"]
+        thumbnail: ["www.google.es"]
         code: "ASD125"
         stock: 10
         status: true
