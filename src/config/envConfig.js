@@ -4,6 +4,7 @@ dotenv.config();
 
 export default {
     PORT: process.env.PORT,
+    MONGO_URL:process.env.MONGO_URL,
     DB_PASSWORD: process.env.DB_PASSWORD,
     SESSION_SECRET: process.env.SESSION_SECRET,
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
