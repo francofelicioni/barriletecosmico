@@ -16,14 +16,14 @@ describe('User Repository', () => {
     //     console.log('Executed before each test');
     // })
 
+    let userId;
+    let userEmail;
+
     it('[GET] api/users should get all users', async () => {
         const users = await userRepository.getAll();
         console.log(users)
         expect(users).to.be.an("array");
     })
-
-    let userId;
-    let userEmail;
 
     it('should create a user', async () => {
 
@@ -50,7 +50,7 @@ describe('User Repository', () => {
     })
 
     it('should get a user by id', async () => {
-        const user = await userRepository.getByEmail(userEmail);
+        const user = await userRepository.getById(userId);
         expect(user).to.be.an("object");
         expect(user.first_name).to.be.a("string");
         expect(user.last_name).to.be.a("string");
@@ -62,7 +62,7 @@ describe('User Repository', () => {
         expect(user.email).to.be.equal(userEmail);
     })
 
-    it('should get a user by id', async () => {
+    it('should get a user by email', async () => {
         const user = await userRepository.getByEmail(userEmail);
         expect(user).to.be.an("object");
         expect(user.first_name).to.be.a("string");
