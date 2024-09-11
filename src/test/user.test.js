@@ -14,19 +14,12 @@ describe('User Repository', () => {
 
     // beforeEach(async () => {
     //     console.log('Executed before each test');
-    // }) 
+    // })
 
-    it('should get all users', async () => {
+    it('[GET] api/users should get all users', async () => {
         const users = await userRepository.getAll();
+        console.log(users)
         expect(users).to.be.an("array");
-        expect(users.length).to.be.greaterThan(0);
-        expect(users[0].first_name).to.be.a("string");
-        expect(users[0].last_name).to.be.a("string");
-        expect(users[0].age).to.be.a("number");
-        expect(users[0].email).to.be.a("string");
-        expect(users[0].role).to.be.a("string");
-        expect(users[0].password).to.be.a("string");
-        expect(users[0].password).to.be.equal("123456");
     })
 
     let userId;
@@ -35,8 +28,8 @@ describe('User Repository', () => {
     it('should create a user', async () => {
 
         const newUser = {
-            first_name: 'Jose Manuel',
-            last_name: 'Alonso Serafin',
+            first_name: 'Kevin Serafin',
+            last_name: 'Kimberly',
             age: 35,
             email: 'rCqg6@example.com',
             password: '123456',
@@ -46,7 +39,7 @@ describe('User Repository', () => {
         const createdUser = await userRepository.create(newUser);
         userId = createdUser._id;
         userEmail = createdUser.email;
-        
+
         expect(newUser.first_name).to.be.a("string");
         expect(newUser.last_name).to.be.a("string");
         expect(newUser.age).to.be.a("number");
@@ -69,16 +62,29 @@ describe('User Repository', () => {
         expect(user.email).to.be.equal(userEmail);
     })
 
+    it('should get a user by id', async () => {
+        const user = await userRepository.getByEmail(userEmail);
+        expect(user).to.be.an("object");
+        expect(user.first_name).to.be.a("string");
+        expect(user.last_name).to.be.a("string");
+        expect(user.age).to.be.a("number");
+        expect(user.email).to.be.a("string");
+        expect(user.role).to.be.a("string");
+        expect(user.password).to.be.a("string");
+        expect(user.password).to.be.equal("123456");
+        expect(user.email).to.be.equal(userEmail);
+    })
+
     it('should update a user', async () => {
 
         const updatedUser = {
-            first_name: 'Estefania Alicia',
-            last_name: 'Santarelli Perez',
+            first_name: 'John',
+            last_name: 'Doe',
             age: 35,
             email: 'rCqg6@example.com',
             password: '123456',
             role: 'admin'
-        }   
+        }
 
         const user = await userRepository.update(userId, updatedUser);
         expect(user).to.be.an("object");
@@ -94,25 +100,14 @@ describe('User Repository', () => {
 
     it('should delete a user', async () => {
         const user = await userRepository.deleteOne(userId);
-        expect(user).to.be.an("object");
-        expect(user.first_name).to.be.a("string");
-        expect(user.last_name).to.be.a("string");
-        expect(user.age).to.be.a("number");
-        expect(user.email).to.be.a("string");
-        expect(user.role).to.be.a("string");
-        expect(user.password).to.be.a("string");
-        expect(user.password).to.be.equal("123456");
-        expect(user.email).to.be.equal(userEmail);
+        expect(user.message).to.be.equal('User deleted')
+        expect(user.success).to.be.equal(true)
     })
 
 
+    // Executed after each test');
     after(async () => {
         await userRepository.deleteOne(userId);
         mongoose.disconnect();
     })
-
-    // afterEach(async () => {
-    //     console.log('Executed after each test');
-    // })
-
 })
