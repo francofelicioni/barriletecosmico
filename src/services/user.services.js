@@ -1,7 +1,7 @@
 import customErrors from "../errors/customErrors.js"
 import userRepository from "../persistence/mongo/repositories/user.repository.js"
+import { sendMail } from "../utils/emailSender.js"
 import { hashPassword, isValidPassword } from "../utils/passwordHash.js"
-import { sendMail } from "../utils/sendEmail.js"
 
 const sendEmailResetPassword = async (email) => {
 
@@ -25,14 +25,30 @@ const changeRole = async (uid) => {
     const user = await userRepository.getById(uid);
     if (!user) throw customErrors.notFound("User not found");
 
-    const userRole = user.role === "admin" ? "user" : "admin";
+    if (user.role === "user" && user.documents.length < 3) throw customErrors.badRequest("User must have at least three documents");
 
+    const userRole = user.role === "premium" ? "user" : "premium";
     return await userRepository.update(uid, { role: userRole });
+};
+
+const addDocuments = async (uid, reqFiles) => {
+    const files = reqFiles.documents
+
+   const userDocuments = files.map(file => {
+        return {
+            name: file.originalname,
+            path: file.path
+        }
+    })
+
+    const user = await userRepository.update(uid, { documents: userDocuments });
+    return user;
 };
 
 
 export default {
     sendEmailResetPassword,
     resetPassword,
-    changeRole
+    changeRole,
+    addDocuments
 }
