@@ -1,34 +1,44 @@
 import mongoose from "mongoose";
-
 const userSchema = new mongoose.Schema({
-  first_name: {
+  firstName: {
     type: String,
-    require: true,
+    required: true
   },
-  last_name: {
+  lastName: {
     type: String,
-    require: true,
+    required: true
   },
   age: {
     type: Number,
-    require: true,
+    required: true
   },
   email: {
     type: String,
     unique: true,
-    require: true,
+    required: true
   },
   password: {
     type: String,
-    require: true,
+    required: true
   },
   role: {
     type: String,
     enum: ['admin', 'user', 'premium'],
     default: 'user',
-    require: true,
+    required: true
   },
-  cart: { type: mongoose.Schema.Types.ObjectId, ref: "carts" }
+  cart: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'carts'
+  },
+  documents: [{
+    name: String,
+    reference: String
+  }],
+  lastConnection: {
+    type: Date,
+    default: Date.now
+  }
 });
 
 export const userModel = mongoose.model('user', userSchema);
