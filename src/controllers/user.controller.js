@@ -49,9 +49,23 @@ const changeRole = async (req, res, next) => {
     }
 };
 
+const addDocuments = async (req, res, next) => {
+    try {
+        const { uid } = req.params;
+        const files = req.files;
+
+        const response = await userServices.addDocuments(uid, files);
+        res.status(200).json({ status: "ok", payload: response });
+    } catch (error) {
+        error.path = "[POST] /api/user/:uid/documents";
+        next(error);
+    }
+}
+
 
 export default {
     sendResetEmail,
     resetPassword,
-    changeRole
+    changeRole,
+    addDocuments
 }
